@@ -1,0 +1,45 @@
+# Exclude secrets, local environment files, and Azure/user token caches
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*passcode*
+*secret*
+.azure/
+.aws/
+.config/
+.copilot/
+
+# Exclude virtual environments, git metadata, and caches
+.git/
+.gitignore
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Exclude runtime artifacts, reports, screenshots, logs, and dev/test outputs
+reports/
+screenshots/
+runtime_artifacts/
+dev_evidence/
+artifacts/
+*.log
+*.out.log
+*.err.log
+api/tests/
+scripts/
+docs/
+portal/
+README.md
+api/private_replay/cu-proof.json
+api/private_replay/cu-binary-proof.json
+api/private_replay/assets/*.jpg
+api/private_history/
+api/private_replay/

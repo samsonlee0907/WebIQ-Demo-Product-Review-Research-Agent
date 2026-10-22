@@ -1,0 +1,2910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Due-Diligence Assistant — Shopper Research & Claim Checker</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #dce1e9;
+      --border-strong: #94a3b8;
+      --text: #0f172a;
+      --text-secondary: #334155;
+      --muted: #475569;
+      --primary: #294fc9;
+      --primary-hover: #1f3ea3;
+      --primary-soft: #edf1ff;
+      --emerald: #047857;
+      --emerald-soft: #d1fae5;
+      --amber: #b45309;
+      --amber-soft: #fef3c7;
+      --rose: #be123c;
+      --rose-soft: #ffe4e6;
+      --violet: #5b21b6;
+      --violet-soft: #ede9fe;
+      --focus-ring: 0 0 0 3px rgba(3, 105, 161, 0.35);
+      --radius: 12px;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      overflow-wrap: anywhere;
+    }
+    a:hover {
+      color: var(--primary-hover);
+    }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible, a:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 8px;
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 6px;
+      z-index: 200;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .skip-link:focus {
+      left: 12px;
+    }
+    header.site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+    }
+    .header-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .brand-group {
+      min-width: 0;
+    }
+    .brand-title {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: var(--text);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    .brand-subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 2px 0 0 0;
+    }
+    .mode-banner {
+      background: var(--amber-soft);
+      border-bottom: 1px solid #fcd34d;
+      color: #78350f;
+      padding: 9px 20px;
+      font-size: 0.82rem;
+    }
+    .mode-banner-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    main.container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 20px 16px 64px;
+      width: 100%;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+      min-width: 0;
+    }
+    @media (max-width: 560px) {
+      .card {
+        padding: 14px 14px;
+      }
+      header.site-header {
+        padding: 12px 14px;
+      }
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .card h3 {
+      margin: 0 0 8px 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .subtext {
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin: 0 0 12px 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid #bae6fd;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+    .badge.emerald {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      border-color: #6ee7b7;
+    }
+    .badge.amber {
+      background: var(--amber-soft);
+      color: var(--amber);
+      border-color: #fde68a;
+    }
+    .badge.rose {
+      background: var(--rose-soft);
+      color: var(--rose);
+      border-color: #fecdd3;
+    }
+    .badge.violet {
+      background: var(--violet-soft);
+      color: var(--violet);
+      border-color: #ddd6fe;
+    }
+    .badge.neutral {
+      background: var(--surface-subtle);
+      color: var(--text-secondary);
+      border-color: var(--border);
+    }
+    label.field-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 5px;
+      margin-top: 12px;
+    }
+    .field-hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input[type="text"], input[type="url"], input[type="password"], textarea {
+      width: 100%;
+      max-width: 100%;
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+    textarea {
+      min-height: 82px;
+      resize: vertical;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 12px;
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .checkbox-row input {
+      margin-top: 3px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: var(--surface-subtle);
+      color: var(--text);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+    .btn-emerald {
+      background: var(--emerald);
+      color: #ffffff;
+      border: 1px solid var(--emerald);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+    .btn-rose {
+      background: var(--rose-soft);
+      color: var(--rose);
+      border: 1px solid #fda4af;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .sample-picker {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .sample-picker-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .scenario-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill-btn {
+      background: var(--surface-subtle);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+    }
+    .pill-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    .pill-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .status-strip {
+      display: none;
+      background: var(--primary-soft);
+      border: 1px solid #7dd3fc;
+      color: #0c4a6e;
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 16px;
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+    .status-strip.error {
+      background: var(--rose-soft);
+      border-color: #fda4af;
+      color: var(--rose);
+    }
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .decision-box {
+      border-radius: 10px;
+      padding: 13px 15px;
+      border: 1px solid var(--border);
+      min-width: 0;
+    }
+    .decision-box.fits {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+    .decision-box.risks {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    .decision-box.gaps {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+    .mode-toggle-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+      gap: 10px;
+      margin: 12px 0 14px 0;
+    }
+    .mode-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 11px 13px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      background: var(--surface-subtle);
+      cursor: pointer;
+      font-size: 0.84rem;
+    }
+    .mode-option.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    .store-targets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+      gap: 9px;
+      margin-top: 8px;
+    }
+    .store-target-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 10px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      background: var(--surface);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .store-target-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    .store-target-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .compat-banner {
+      margin-top: 10px;
+      padding: 10px 13px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-subtle);
+    }
+    .compat-banner.warn {
+      background: var(--amber-soft);
+      border-color: #fcd34d;
+      color: #78350f;
+    }
+    .compat-banner.ok {
+      background: var(--emerald-soft);
+      border-color: #86efac;
+      color: #065f46;
+    }
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      margin-top: 8px;
+    }
+    .matrix-table th, .matrix-table td {
+      border: 1px solid var(--border);
+      padding: 7px 9px;
+      text-align: left;
+    }
+    .matrix-table th {
+      background: var(--surface-subtle);
+      font-weight: 700;
+    }
+    .key-callout-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+    }
+    .decision-box ul {
+      margin: 8px 0 0 0;
+      padding-left: 18px;
+      font-size: 0.86rem;
+    }
+    .decision-box li {
+      margin-bottom: 6px;
+    }
+    .claim-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .claim-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 15px;
+      background: var(--surface-subtle);
+      min-width: 0;
+    }
+    .claim-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .claim-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+      gap: 10px;
+      font-size: 0.84rem;
+      margin-top: 8px;
+    }
+    .claim-detail-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 11px;
+      min-width: 0;
+    }
+    .source-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      background: var(--surface-subtle);
+      font-size: 0.85rem;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .segment-row {
+      margin-top: 8px;
+      padding: 8px 11px;
+      border-left: 3px solid var(--violet);
+      background: var(--surface);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.83rem;
+    }
+    .signals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .signal-box {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 13px;
+      font-size: 0.83rem;
+      min-width: 0;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+      gap: 12px;
+    }
+    .shot-card {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      text-align: left;
+      padding: 0;
+      width: 100%;
+    }
+    .shot-card:hover {
+      border-color: var(--primary);
+    }
+    .shot-card img {
+      width: 100%;
+      height: 132px;
+      object-fit: cover;
+      display: block;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+    }
+    .shot-meta {
+      padding: 9px 11px;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+    details.advanced-drawer {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-top: 22px;
+    }
+    details.advanced-drawer > summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+    .cap-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .cap-item {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+    }
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .step-item {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+    }
+    .step-item.done {
+      border-color: #6ee7b7;
+      background: #f0fdf4;
+    }
+    .skill-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .skill-chip {
+      font-size: 0.76rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: var(--primary-soft);
+      border: 1px solid #7dd3fc;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .activity-log {
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.76rem;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 8px;
+    }
+    .activity-line {
+      margin-bottom: 6px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed var(--border);
+      overflow-wrap: anywhere;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+      border: 0;
+      margin: 0;
+      width: 100vw;
+      max-width: none;
+      height: 100dvh;
+      max-height: none;
+    }
+    .modal-backdrop[open] {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-width: 880px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 18px;
+    }
+    .retrieved-response { margin-top:10px; min-width:0; overflow-wrap:anywhere; }
+    .retrieved-response > summary { cursor:pointer; font-weight:600; }
+    .retrieved-response pre { white-space:pre-wrap; overflow-wrap:anywhere; font-size:.76rem; max-height:420px; overflow:auto; padding:10px; background:var(--surface-subtle); }
+    .item-captures { margin-top:8px; font-size:.8rem; overflow-wrap:anywhere; }
+    pre.skill-pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: var(--surface-subtle);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+    .workspace-intro { margin: 16px 0 28px; max-width: 650px; }
+    .workspace-intro h1 { font-size: clamp(1.8rem, 4vw, 2.45rem); line-height: 1.18; letter-spacing: -0.045em; margin: 8px 0 12px; font-weight: 700; }
+    .workspace-intro p { color: var(--muted); margin: 0; }
+    .workspace-intro .eyebrow { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--primary); font-weight: 700; }
+    .header-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; font-size: 0.83rem; }
+    .brand-title { text-decoration: none; }
+    .header-nav a { text-decoration: none; }
+    main.container, .header-inner { max-width: 980px; }
+    main.container { padding-top: 24px; }
+    .card { padding: 24px; border-radius: 16px; box-shadow: 0 2px 8px rgba(15,23,42,.025); }
+    .card-header { align-items: center; margin-bottom: 14px; }
+    .card h2 { font-size: 1.12rem; letter-spacing: -.02em; }
+    .btn-primary, .btn-secondary, .btn-emerald, .btn-rose { min-height: 44px; }
+    .btn-primary { padding: 11px 22px; font-weight: 650; }
+    .btn-secondary { background: var(--surface); }
+    input[type="text"], input[type="url"], input[type="password"], textarea { font-size: 1rem; padding: 12px; }
+    .form-note { font-size: .78rem; color: var(--muted); margin: 12px 0 0; }
+    .method-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; padding: 14px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .method-summary > div { min-width: 0; }
+    .method-summary .selected-options { margin: 0 0 5px; }
+    .method-description { display: block; font-size: .78rem; color: var(--muted); }
+    .method-summary > button { flex-shrink: 0; font-size: .8rem; }
+    .settings-drawer .mode-toggle-row { margin-top: 12px; }
+    .workflow-preview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .workflow-preview li { font-size: .8rem; color: var(--muted); }
+    .workflow-preview strong { display: block; color: var(--text-secondary); font-size: .83rem; margin-bottom: 3px; }
+    .workflow-preview span { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-bottom: 10px; color: var(--primary); background: var(--primary-soft); border-radius: 50%; font-size: .73rem; font-weight: 700; }
+    #empty-state-card { background: transparent; box-shadow: none; border: 0; padding-top: 8px; }
+    #empty-state-heading { font-size: .8rem; color: var(--muted); font-weight: 500; }
+    #status-strip { scroll-margin-top: 20px; }
+    #verdict-card, #research-overview, #research-timeline-card { scroll-margin-top: 24px; }
+    #research-overview { background: var(--surface-subtle); box-shadow: none; }
+    #run-input-context { max-height: 5em; overflow-y: auto; }
+    .progress-track { display: flex; gap: 6px; list-style: none; padding: 0; margin: 18px 0 8px; }
+    .progress-track li { flex: 1; min-width: 0; border-top: 3px solid var(--border); padding-top: 8px; color: var(--muted); font-size: .76rem; }
+    .progress-track li[data-state="running"] { border-color: var(--primary); color: var(--primary); font-weight: 700; }
+    .progress-track li[data-state="complete"] { border-color: var(--emerald); }
+    .progress-track li[data-state="limited"], .progress-track li[data-state="error"] { border-color: var(--amber); }
+    .progress-track a { color: inherit; text-decoration: none; display: block; min-height: 32px; }
+    .connection-status { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .prototype-note { color: var(--muted); font-size: .76rem; margin: 22px 0 0; }
+    .site-header .brand-subtitle { font-size: 0.78rem; }
+    .mode-banner { border: 1px solid var(--border); border-radius: 8px; margin-top: 12px; }
+    .settings-drawer { border: 1px solid var(--border); border-radius: 10px; margin-top: 16px; padding: 12px; }
+    .settings-drawer > summary { cursor: pointer; font-weight: 700; }
+    .selected-options, .run-options { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+    .mode-toggle-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+    .mode-option { min-width: 0; }
+    .mode-option > span > span:last-child { font-size: 0.78rem !important; }
+    .research-nav { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.82rem; margin-bottom: 12px; }
+    .research-timeline { list-style: none; padding: 0; margin: 16px 0 0; }
+    .research-timeline > li { position: relative; padding: 0 0 14px 32px; border-left: 2px solid var(--border); margin-left: 14px; min-width: 0; }
+    .research-timeline > li:last-child { border-left-color: transparent; padding-bottom: 0; }
+    .timeline-step { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+    .post-research-action { margin: 18px 0; grid-column: 1 / -1; min-width: 0; }
+    .post-research-action .timeline-number { position: static; flex-shrink: 0; }
+    .timeline-step > summary { cursor: pointer; padding: 14px; list-style: none; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .timeline-step > summary::-webkit-details-marker { display: none; }
+    .timeline-step > summary::after { content: "+"; color: var(--muted); font-size: 1.2rem; margin-left: auto; }
+    .timeline-step[open] > summary::after { content: "-"; }
+    .timeline-number { position: absolute; left: -16px; width: 30px; height: 30px; border-radius: 50%; background: var(--surface-subtle); border: 2px solid var(--border); display: grid; place-items: center; font-weight: 800; font-size: 0.8rem; }
+    .timeline-step[data-state="running"] { border-color: var(--primary); }
+    .timeline-step[data-state="running"] .timeline-number { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+    .timeline-step[data-state="complete"] .timeline-number { background: var(--emerald-soft); border-color: var(--emerald); }
+    .timeline-step[data-state="error"] .timeline-number, .timeline-step[data-state="limited"] .timeline-number { background: var(--amber-soft); border-color: var(--amber); }
+    .timeline-label { flex: 1; min-width: min(100%, 140px); }
+    .timeline-label strong { display: block; font-size: 0.94rem; }
+    .timeline-label small { display: block; color: var(--muted); font-size: 0.78rem; }
+    .timeline-content { padding: 0 14px 14px; border-top: 1px solid var(--border); }
+    .timeline-content > .card { border: 0; box-shadow: none; padding: 14px 0 0; margin: 0; }
+    .timeline-content .card h2 { font-size: 0.96rem; }
+    .timeline-objective { font-size: 0.82rem; color: var(--muted); margin-top: 12px; }
+    .timeline-evidence { font-size: 0.83rem; }
+    .timeline-evidence p { margin: 10px 0; }
+    .timeline-events { margin-top: 10px; font-size: 0.8rem; max-height: 260px; overflow-y: auto; }
+    .timeline-events:empty, .timeline-captures:empty { display: none; }
+    .timeline-event { padding: 9px 0; border-top: 1px solid var(--border); }
+    .timeline-event time { color: var(--muted); margin-right: 6px; font-size: 0.75rem; }
+    .timeline-captures { margin-top: 12px; }
+    .timeline-content .decision-grid { margin-top: 12px; }
+    .comparison-scroll { overflow-x: auto; max-width: 100%; }
+    .comparison-table { border-collapse: collapse; width: 100%; font-size: 0.82rem; text-align: left; }
+    .comparison-table th, .comparison-table td { border-bottom: 1px solid var(--border); vertical-align: top; padding: 10px; min-width: 150px; max-width: 300px; overflow-wrap: anywhere; }
+    .comparison-table th[scope="row"] { min-width: 110px; color: var(--muted); }
+    .comparison-table thead th { background: var(--surface-subtle); }
+    .comparison-table button { margin-top: 8px; font-size: 0.75rem; padding: 4px 8px; }
+    .comparison-scroll:focus-visible { outline: 2px solid var(--primary); }
+    #comparison-warning { color: var(--amber); }
+    [hidden] { display: none !important; }
+    @media (max-width: 560px) {
+      main.container { padding-top: 16px; }
+      .workspace-intro { margin: 8px 0 24px; }
+      .card { padding: 18px 16px; }
+      .header-nav { gap: 12px; font-size: .78rem; }
+      .header-nav a[href="#advanced-drawer"] { display: none; }
+      .method-summary { align-items: flex-start; }
+      .method-summary > button { padding: 8px 10px; }
+      .workflow-preview { grid-template-columns: repeat(2, 1fr); row-gap: 20px; }
+      .btn-row .btn-primary { flex: 1; }
+      .research-timeline > li { padding-left: 22px; }
+      .timeline-step > summary { padding: 10px; gap: 6px; }
+      .timeline-content { padding: 0 10px 10px; }
+      .workspace-intro h2 { font-size: 1.4rem; }
+      .brand-subtitle { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to product research form</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <a class="brand-title" href="/" aria-label="Before you buy home">Before you buy<span style="color:var(--primary);">.</span></a>
+      </div>
+      <nav class="header-nav" aria-label="Workspace">
+        <a href="/saved-research">Saved research</a>
+        <a href="/benchmark-report">Compare methods</a>
+        <a href="#advanced-drawer" onclick="document.getElementById('advanced-drawer').open = true;">How it works</a>
+        <div id="connection-status" class="connection-status">
+        <span class="badge neutral" id="vm-worker-pill" title="Remote Windows VM running Native Chrome + Playwright worker">🖥️ Windows VM Worker: Checking...</span>
+        <span class="badge neutral" id="chrome-ext-pill" title="Install the unpacked Chrome extension from browser_extension/ to let the agent navigate and screenshot tabs in your own Chrome browser">🧩 Chrome Extension: Not Detected</span>
+        <span class="badge amber" id="health-pill" aria-live="polite">Sample / Demo Mode (Local Fixtures)</span>
+        </div>
+        <button type="button" class="btn-secondary" id="logout-btn" style="display:none; padding:5px 10px; font-size:0.76rem;" onclick="logoutSession()">Sign out</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="mode-banner" role="region" aria-label="Prototype mode notice">
+    <div class="mode-banner-inner">
+      <span id="mode-banner-text">
+        <strong>Sample mode:</strong> Explore illustrative research, not verified product advice. No live pages are read, and nothing is added to a real cart.
+      </span>
+      <a href="#advanced-drawer" onclick="document.getElementById('advanced-drawer').open = true;">How this demo works &darr;</a>
+    </div>
+  </div>
+
+  <main class="container" id="main-content">
+    <section class="workspace-intro" aria-labelledby="workspace-title">
+      <p class="eyebrow">A little research. A clearer decision.</p>
+      <h1 id="workspace-title">Look beyond the listing.</h1>
+      <p>Share a product link and your priorities. Get an evidence-led buying brief.</p>
+    </section>
+    <!-- STEP 1: PRIMARY SHOPPER INPUTS -->
+    <section class="card" aria-labelledby="input-heading">
+      <div class="card-header">
+        <h2 id="input-heading">What are you considering?</h2>
+        <button type="button" class="btn-secondary" id="load-example-btn" onclick="loadExample()" style="font-size:.78rem;">Try Sony example</button>
+      </div>
+      <form id="research-form" onsubmit="event.preventDefault(); startPipelineRun();">
+      <label class="field-label" for="product-url">Product listing URL</label>
+      <input type="url" id="product-url" placeholder="https://example.com/product" required autocomplete="url" autocapitalize="none" spellcheck="false" aria-describedby="url-hint" oninput="onUserInputChanged()" />
+      <p class="field-hint" id="url-hint" style="margin:5px 0 0;">A public product page starting with https://.</p>
+      <label class="field-label" for="user-intent">What matters to you?</label>
+      <textarea id="user-intent" required placeholder="For example: Comfortable for long flights with glasses, under $450." aria-describedby="intent-hint" oninput="onUserInputChanged()"></textarea>
+      <p class="field-hint" id="intent-hint" style="margin:5px 0 0;">Your use case, deal-breakers and budget. Both fields are required.</p>
+      <div class="method-summary">
+        <div>
+          <div class="selected-options" id="selected-options" aria-label="Selected research options"></div>
+          <span class="method-description" id="input-mode-badge">Sample preview. No live pages are read.</span>
+        </div>
+        <button type="button" class="btn-secondary" id="change-method-btn" onclick="openResearchSettings()">Change method</button>
+      </div>
+      <details class="settings-drawer" id="research-settings">
+      <summary>Research settings</summary>
+      <p class="field-hint" style="margin-top:10px;">Four live paths inspect the listing and discovered review pages with the same inspector. Search-only reviews inspects only the initial listing, then uses search for reviews. A sample does not verify product claims.</p>
+      <div class="mode-toggle-row" role="radiogroup" aria-label="Execution mode">
+        <label class="mode-option" id="mode-opt-vm-playwright" for="exec-mode-vm-playwright">
+          <input type="radio" name="execution-mode" id="exec-mode-vm-playwright" value="vm_playwright" onchange="onExecutionModeChanged()" />
+          <span>
+            <span style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
+              <strong>Azure VM + Playwright</strong>
+              <span class="badge neutral" id="vm-mode-subpill" style="font-size:0.68rem;">Checking VM...</span>
+            </span>
+            <span style="display:block; font-size:0.77rem; color:var(--muted); margin-top:3px;">
+              Native Chrome on the Azure Windows VM. Returns screenshots and page text; site restrictions still apply.
+            </span>
+          </span>
+        </label>
+        <label class="mode-option" id="mode-opt-client-browser" for="exec-mode-client-browser">
+          <input type="radio" name="execution-mode" id="exec-mode-client-browser" value="client_browser" onchange="onExecutionModeChanged()" />
+          <span>
+            <span style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
+              <strong>Local Playwright</strong>
+              <span class="badge neutral" id="ext-mode-subpill" style="font-size:0.68rem;">Local Tab</span>
+            </span>
+            <span style="display:block; font-size:0.77rem; color:var(--muted); margin-top:3px;">
+              Uses your connected Chrome extension. Returns screenshots and page text from your local browser.
+            </span>
+          </span>
+        </label>
+        <label class="mode-option" id="mode-opt-live" for="exec-mode-live">
+          <input type="radio" name="execution-mode" id="exec-mode-live" value="live" onchange="onExecutionModeChanged()" />
+          <span>
+            <span style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
+              <strong>Azure BAT Tool</strong>
+              <span class="badge neutral" style="font-size:0.68rem;">Serverless CDP</span>
+            </span>
+            <span style="display:block; font-size:0.77rem; color:var(--muted); margin-top:3px;">
+              Managed remote Playwright browser through Foundry. Returns screenshots and page text when permitted.
+            </span>
+          </span>
+        </label>
+        <label class="mode-option" id="mode-opt-webiq-browse" for="exec-mode-webiq-browse">
+          <input type="radio" name="execution-mode" id="exec-mode-webiq-browse" value="webiq_browse" onchange="onExecutionModeChanged()" />
+          <span>
+            <span style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
+              <strong>WebIQ Browse</strong>
+              <span class="badge violet" style="font-size:0.68rem;">Index + Live Crawl</span>
+            </span>
+            <span style="display:block; font-size:0.77rem; color:var(--muted); margin-top:3px;">
+              Fetches indexed or live-crawled Markdown through <code>/v3/browse</code>. Requires a WebIQ key; no browser screenshot.
+            </span>
+          </span>
+        </label>
+        <label class="mode-option" id="mode-opt-search-only" for="exec-mode-search-only">
+          <input type="radio" name="execution-mode" id="exec-mode-search-only" value="search_only" onchange="onExecutionModeChanged()" />
+          <span><strong>Search-only reviews</strong>
+            <span style="display:block; font-size:0.77rem; color:var(--muted); margin-top:3px;">Inspect the initial listing only. Discover reviews using WebIQ Search or Foundry web search; do not open discovered review pages.</span>
+          </span>
+        </label>
+        <label class="mode-option active" id="mode-opt-sample" for="exec-mode-sample">
+          <input type="radio" name="execution-mode" id="exec-mode-sample" value="sample" checked onchange="onExecutionModeChanged()" />
+          <span>
+            <span style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
+              <strong>Sample walkthrough</strong>
+              <span class="badge amber" style="font-size:0.68rem;">Instant Offline</span>
+            </span>
+            <span style="display:block; font-size:0.77rem; color:var(--muted); margin-top:3px;">
+              Offline illustrative fixtures, not live research. Excluded from live run comparisons.
+            </span>
+          </span>
+        </label>
+      </div>
+
+      <div id="initial-inspector-wrap" hidden>
+        <label class="field-label" for="initial-inspector">Initial listing inspector</label>
+        <select id="initial-inspector" onchange="onExecutionModeChanged()" style="max-width:100%; padding:8px;">
+          <option value="webiq_browse">WebIQ Browse</option>
+          <option value="live">Azure BAT Tool</option>
+          <option value="client_browser">Local Playwright</option>
+          <option value="vm_playwright">Azure VM + Playwright</option>
+        </select>
+        <p class="field-hint">WebIQ Browse needs a key. Choose a browser inspector to use Toolbox discovery without a WebIQ key. No hidden fallback.</p>
+      </div>
+
+      <div id="chrome-ext-help-box" style="display:none; margin-top:10px; padding:12px 14px; border-radius:10px; background:var(--primary-soft); border:1px solid #7dd3fc; font-size:0.82rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <strong>🧩 How to connect your open Chrome window (30-second one-time setup):</strong>
+          <a href="/api/chrome-extension.zip" class="btn-secondary" style="padding:5px 10px; font-size:0.77rem;">⬇ Download Extension (.zip)</a>
+        </div>
+        <ol style="margin:8px 0 0 0; padding-left:20px; color:var(--text-secondary);">
+          <li>In Chrome, open <code>chrome://extensions/</code> and toggle <strong>Developer mode</strong> ON (top-right).</li>
+          <li>Click <strong>Load unpacked</strong> and select the <code>browser_extension</code> folder in your repo worktree (or unzip the downloaded <code>pdd-chrome-extension.zip</code>).</li>
+          <li>Refresh this portal tab — the top badge will turn green (<strong>🧩 Chrome Extension Connected</strong>) and the agent will automatically navigate and screenshot in your Chrome window!</li>
+        </ol>
+      </div>
+
+      <details id="community-settings" style="margin-top:12px;">
+        <summary>Optional: agent-guided community exploration</summary>
+        <p class="field-hint" id="community-eligibility">Available with Azure BAT Tool, Local Playwright or Azure VM + Playwright.</p>
+        <label style="display:flex;align-items:center;gap:8px;margin:10px 0;">
+          <input type="checkbox" id="community-exploration" onchange="onCommunityOptionsChanged()" disabled />
+          Let the agent explore public discussions beyond search-result URLs
+        </label>
+        <div id="community-domains-wrap" hidden>
+          <label class="field-label" for="exploration-domains">Community domains</label>
+          <textarea id="exploration-domains" rows="2" maxlength="2100" onchange="onCommunityOptionsChanged()"
+            aria-describedby="community-domain-help" style="width:100%;box-sizing:border-box;">reddit.com, youtube.com, amazon.com</textarea>
+          <p class="field-hint" id="community-domain-help">Edit up to eight domain names, separated by commas or new lines. Subdomains are included. This list limits only extra exploration, not general web discovery.</p>
+          <p class="field-hint">Up to 12 model-chosen actions, six pages, three scoped searches and four minutes. The agent can follow observed links or scroll for discussion. No posting, sign-in, purchase or media processing. Comments are unverified assertions; access gates and read-only request rules can prevent them loading.</p>
+          <p class="field-hint">Local Chrome needs bridge extension 1.1.0 (reload the updated extension); VM needs the current worker bundle.</p>
+        </div>
+      </details>
+
+      <details class="sample-picker" style="margin-top:12px; padding-top:12px;">
+        <summary>Load an example product or storefront</summary>
+        <div class="sample-picker-label" style="justify-content:space-between;">
+          <span>Product presets and storefronts:</span>
+          <label style="font-weight:600; font-size:0.76rem; color:var(--primary); cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
+            <input type="checkbox" id="auto-switch-recommended-mode" />
+            Auto-switch execution engine to store's recommended live mode
+          </label>
+        </div>
+        <div class="scenario-pills" id="scenario-pills" role="group" aria-label="Sample product walkthroughs"></div>
+        <div id="store-target-section" style="margin-top:10px;">
+          <div style="font-size:0.76rem; font-weight:700; color:var(--muted); margin-bottom:4px;">Target Storefront for Selected Product (click to load Official Store, Amazon, or Retailer URL):</div>
+          <div class="store-targets-grid" id="store-target-pills" role="group" aria-label="Target storefront options"></div>
+        </div>
+      </details>
+
+      <div id="domain-compat-banner" class="compat-banner" style="display:none;"></div>
+
+      <details id="compat-matrix-drawer" style="margin-top:10px; background:var(--surface-subtle); border:1px solid var(--border); border-radius:10px; padding:9px 13px; font-size:0.81rem;">
+        <summary style="cursor:pointer; font-weight:700; color:var(--text-secondary);">📊 View Live Method Comparison Matrix (Azure VM + Playwright / Local Playwright / Azure BAT Tool / WebIQ)</summary>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:8px;">
+          <span style="font-size:0.78rem; color:var(--muted);">Historical URL-only compatibility observations for the four inspectors, not current full-pipeline measurements. The benchmark report compares five live paths, including search-only reviews (samples excluded).</span>
+          <a href="/benchmark-report" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:4px 10px; font-size:0.76rem;">📄 Open Full Visual Benchmark Report (.html) &nearr;</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th>Target Site / Storefront</th>
+                <th>🖥️ Azure VM + Playwright</th>
+                <th>💻 Local Playwright</th>
+                <th>☁️ Azure BAT Tool</th>
+                <th>🔎 WebIQ</th>
+              </tr>
+            </thead>
+            <tbody id="compat-matrix-tbody"></tbody>
+          </table>
+        </div>
+      </details>
+
+      <div class="key-callout-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+          <label class="field-label" for="webiq-key" style="margin:0;">WebIQ key <span style="font-weight:400;">(optional unless using WebIQ Browse)</span></label>
+          <span class="badge neutral" id="webiq-key-status-badge">Path 2 Active: Foundry Toolbox web_search (or enter Web IQ key for Path 1)</span>
+        </div>
+        <div class="field-hint" style="margin-top:4px;">
+          With a key, WebIQ discovers review sites and powers WebIQ Browse. Without one, live browser methods use Foundry web search. Your key stays request-scoped and is never saved.
+        </div>
+        <input type="password" id="webiq-key" placeholder="Paste your WebIQ key" autocomplete="off" data-lpignore="true" oninput="onWebIqKeyChanged()" />
+      </div>
+
+      </details>
+      <div class="btn-row">
+        <button type="submit" class="btn-primary" id="run-btn">
+          Preview sample
+        </button>
+        <button type="button" class="btn-secondary" onclick="previewAgentPlan(true)">
+          Preview the plan
+        </button>
+      </div>
+      <p class="form-note">Nothing is purchased. Public-page visits are read-only; actual challenges, login walls, denied access and publisher restrictions are respected. Inaccessible sources stay visible as gaps.</p>
+      <p class="form-note">Reports, browser evidence and screenshots are saved until deleted in <a href="/saved-research">Saved research</a>, shared with portal passcode holders. Raw WebIQ responses are not archived.</p>
+      </form>
+    </section>
+
+    <p id="saved-research-status" role="status" aria-live="polite" hidden></p>
+    <section class="card" id="research-overview" hidden aria-labelledby="research-overview-heading">
+      <div class="card-header">
+        <h2 id="research-overview-heading" tabindex="-1">Research progress</h2>
+        <span class="badge neutral" id="run-outcome">Not started</span>
+      </div>
+      <p class="subtext" id="run-input-context"></p>
+      <div class="run-options" id="run-options"></div>
+      <ol class="progress-track" aria-label="Four research stages">
+        <li id="progress-listing" data-state="queued"><a href="#timeline-listing" onclick="document.getElementById('timeline-listing').open = true;">1. Listing</a></li>
+        <li id="progress-discovery" data-state="queued"><a href="#timeline-discovery" onclick="document.getElementById('timeline-discovery').open = true;">2. Discovery</a></li>
+        <li id="progress-browsing" data-state="queued"><a href="#timeline-browsing" onclick="document.getElementById('timeline-browsing').open = true;">3. Inspection</a></li>
+        <li id="progress-synthesis" data-state="queued"><a href="#timeline-synthesis" onclick="document.getElementById('timeline-synthesis').open = true;">4. Brief</a></li>
+      </ol>
+      <p id="search-results-summary" role="status" aria-live="polite">Waiting for search discovery.</p>
+      <nav class="research-nav" aria-label="Research results">
+        <a href="#research-timeline-card">Follow the research timeline</a>
+        <a href="#comparison-card" id="compare-runs-link" hidden>Compare live runs</a>
+      </nav>
+    </section>
+
+    <section class="card" id="research-timeline-card" hidden aria-labelledby="timeline-heading">
+      <div class="card-header">
+        <h2 id="timeline-heading" tabindex="-1">Follow the evidence</h2>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="btn-secondary" onclick="toggleTimeline(true)">Expand all</button>
+          <button type="button" class="btn-secondary" onclick="toggleTimeline(false)">Collapse all</button>
+        </div>
+      </div>
+      <p class="subtext">Open any step to see what was read, captured or left unverified. A search result is not an inspected page.</p>
+      <ol class="research-timeline" id="research-timeline"></ol>
+    </section>
+
+    <section class="card" id="comparison-card" hidden aria-labelledby="comparison-heading">
+      <div class="card-header">
+        <h2 id="comparison-heading">Compare live research runs</h2>
+        <button type="button" class="btn-secondary" id="clear-comparisons" onclick="clearComparisons()">Clear comparison</button>
+      </div>
+      <p class="subtext">Last five live runs in this tab, kept for 15 minutes from completion. Refresh or clear to discard. Only input settings, counts and outcome labels are kept here, never keys, transcripts, page content or screenshots. Sample runs are excluded.</p>
+      <p class="subtext" id="comparison-warning"></p>
+      <div class="comparison-scroll" tabindex="0" role="region" aria-label="Live run comparison table">
+        <div id="run-comparisons"><p class="subtext">Complete a live run, then change the research method and run again to compare coverage.</p></div>
+      </div>
+    </section>
+
+    <!-- LIVE STATUS / ERROR STRIP -->
+    <div id="status-strip" class="status-strip" role="status" aria-live="polite"></div>
+
+    <!-- HELPFUL EMPTY STATE BEFORE FIRST RUN -->
+    <section class="card" id="empty-state-card" aria-labelledby="empty-state-heading">
+      <div class="card-header">
+        <h2 id="empty-state-heading">One clear route, from link to brief</h2>
+      </div>
+      <ol class="workflow-preview">
+        <li><span>1</span><strong>Understand the listing</strong>Identify the product and seller claims.</li>
+        <li><span>2</span><strong>Find relevant reviews</strong>Look for labs, owners and discussions.</li>
+        <li><span>3</span><strong>Inspect the pages</strong>Record what could actually be read.</li>
+        <li><span>4</span><strong>Explain the trade-offs</strong>Connect evidence to your priorities.</li>
+      </ol>
+    </section>
+
+    <!-- 2. DECISION SUMMARY: WHAT FITS + WATCH-OUTS -->
+    <section class="card" id="verdict-card" style="display:none;" aria-labelledby="verdict-title">
+      <div class="card-header">
+        <div>
+          <span class="badge amber" id="verdict-provenance-badge" style="margin-bottom:6px;">Sample Walkthrough</span>
+          <h2 id="verdict-title" tabindex="-1">Your buying brief</h2>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <span class="badge emerald" id="verdict-badge"></span>
+          <a id="download-report-link" class="btn-secondary" style="display:none;" target="_blank" rel="noopener noreferrer">
+            ⬇ Download Summary (.md)
+          </a>
+        </div>
+      </div>
+
+      <p id="verdict-summary" style="font-size: 0.93rem; color: var(--text); margin: 8px 0 12px 0; font-weight: 500;"></p>
+      <div id="baseline-meta" style="font-size: 0.83rem; color: var(--muted); padding: 10px 12px; background: var(--surface-subtle); border-radius: 8px; border: 1px solid var(--border);"></div>
+
+      <div class="decision-grid">
+        <div class="decision-box fits">
+          <h3 style="color: var(--emerald); margin:0;">✅ Potential fit</h3>
+          <ul id="what-fits-list"></ul>
+        </div>
+        <div class="decision-box risks">
+          <h3 style="color: var(--amber); margin:0;">⚠️ What to watch out for</h3>
+          <ul id="watch-outs-list"></ul>
+        </div>
+        <div class="decision-box gaps" id="evidence-gaps-box" style="display:none;">
+          <h3 style="color: var(--text-secondary); margin:0;">🔍 Evidence gaps &amp; deferred checks</h3>
+          <ul id="evidence-gaps-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. CLAIM-VS-REALITY CHECKS (RESPONSIVE CARDS WITH 1-CLICK SOURCE ATTRIBUTION) -->
+    <section class="card" id="matrix-card" style="display:none;" aria-labelledby="matrix-heading">
+      <div class="card-header">
+        <h2 id="matrix-heading">A closer look at the claims</h2>
+        <span class="badge neutral">Direct Source Attribution per Claim</span>
+      </div>
+      <p class="subtext">
+        Sample findings demonstrate the layout, not what the linked websites actually said. Open a source to investigate it yourself.
+      </p>
+      <div class="claim-list" id="matrix-list"></div>
+    </section>
+
+    <!-- 4. MULTI-PLATFORM REVIEW EXCERPTS (<=200 CHARS) & PERMITTED-SOURCE BAT BROWSING -->
+    <section class="card" id="sources-card" style="display:none;" aria-labelledby="sources-heading">
+      <div class="card-header">
+        <h2 id="sources-heading">Reviews and discussions</h2>
+        <span class="badge amber" id="web-sources-badge">0 sources</span>
+      </div>
+      <p class="subtext" id="sources-subtext">
+        Sample passages are fictional illustrations, not quotations from these publishers. Live search results, when available, are labelled separately.
+      </p>
+      <div id="web-sources-list"></div>
+      <div id="browsed-sources-wrap" style="display:none; margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+        <h3 id="review-inspection-heading" style="margin:0 0 6px 0;">🌐 Discovered-page inspection</h3>
+        <p class="subtext" style="margin-bottom:8px;">
+          Every unique eligible discovered URL uses the same method as the initial listing. Each result shows its inspector, fetched-content count, and access status. Policy restrictions are reported without evasion; search snippets never count as page inspection.
+        </p>
+        <div id="browsed-sources-list"></div>
+      </div>
+    </section>
+
+    <!-- 6. EVIDENCE COVERAGE & CONSISTENCY SIGNALS -->
+    <section class="card" id="signals-card" style="display:none;" aria-labelledby="signals-heading">
+      <div class="card-header">
+        <h2 id="signals-heading">How much evidence do we have?</h2>
+        <span class="badge neutral">Coverage Indicators (Not Proof of Review Authenticity)</span>
+      </div>
+      <p class="subtext" id="signals-disclaimer">
+        These indicators summarize source variety and consistency in the loaded data; they do not prove that third-party online reviews are genuine.
+      </p>
+      <div class="signals-grid" id="signals-grid"></div>
+    </section>
+
+    <!-- 7. SIMULATED ADD-TO-CART GUARDRAIL -->
+    <section class="card" id="cart-gate-card" style="display:none;" aria-labelledby="cart-heading">
+      <div class="card-header">
+        <h2 id="cart-heading">Try the approval step</h2>
+        <span class="badge emerald">Simulation Only — Never Modifies Any Retailer Cart</span>
+      </div>
+      <p class="subtext">
+        Tests the human-in-the-loop SKU, variant, seller, and price-ceiling lock in memory. Approving this simulation never contacts a live retailer or modifies a real shopping cart, and checkout/payment actions are hard-blocked with HTTP 403.
+      </p>
+      <div id="cart-gate-details" style="background:var(--surface-subtle); border:1px solid var(--border); border-radius:10px; padding:12px; font-size:0.84rem; overflow-wrap:anywhere;"></div>
+      <div class="btn-row">
+        <button type="button" class="btn-emerald" id="approve-cart-btn" onclick="submitCartDecision(true, 'add_to_cart')">
+          ✅ Simulate Add-to-Cart Gate (Demo Only)
+        </button>
+        <button type="button" class="btn-rose" onclick="submitCartDecision(true, 'proceed_to_checkout')">
+          Confirm purchases are blocked
+        </button>
+      </div>
+      <div id="cart-receipt-box" style="margin-top:12px; display:none;" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- 8. GENERATED STAGE SUMMARY CARDS (SVG ILLUSTRATIONS) -->
+    <section class="card" id="gallery-card" style="display:none;" aria-labelledby="gallery-heading">
+      <div class="card-header">
+        <h2 id="gallery-heading">Research illustrations</h2>
+        <span class="badge neutral" id="shot-count-badge">0 cards</span>
+      </div>
+      <p class="subtext">
+        Generated SVG stage illustrations summarizing each step (not live browser screenshots). Click any card to inspect full-size.
+      </p>
+      <div class="gallery-grid" id="screenshot-gallery"></div>
+    </section>
+
+    <!-- PROGRESSIVE DISCLOSURE: TECHNICAL DIAGNOSTICS, PLAN, SKILLS & OPTIONAL LIVE SEARCH -->
+    <details class="advanced-drawer" id="advanced-drawer">
+      <summary>Behind the research: plan, connections and activity</summary>
+
+      <div style="margin-top:14px;">
+        <h3>Service connections</h3>
+        <p class="subtext">
+          Environment variables alone do not establish live browser or model connectivity. <code>scripts/provision_foundry.ps1</code> is a read-only local checklist, not a one-command deployment script. Cart actions remain simulation-only.
+        </p>
+        <div class="cap-list" id="capabilities-list"></div>
+
+        <h3 style="margin-top:18px;">Technical settings</h3>
+        <p class="subtext">
+          Live research uses the operator's configured Foundry project, model and tools. Local access reads a tenant/account-pinned sign-in cache; hosted access uses managed identity. Enter a request-scoped WebIQ key above, or use the operator's configured Toolbox web_search for discovery. A fresh checkout supports offline samples without cloud configuration.
+        </p>
+
+        <label class="field-label" for="webiq-query">Optional Web Search Query Override (<code>/v3/search/web</code>)</label>
+        <input type="text" id="webiq-query" placeholder="Auto-generated from the product and priorities by the configured live model" />
+
+
+        <h3 style="margin-top:18px;">Planned Check Steps &amp; Loaded Methodology Skills (<code>SKILL.md</code>)</h3>
+        <div class="skill-chips" id="loaded-skills"></div>
+        <div class="step-list" id="plan-steps"></div>
+
+        <h3 style="margin-top:18px;">Live Pipeline Event Log (<span id="event-counter">0 events</span>)</h3>
+        <div class="activity-log" id="activity-log"></div>
+      </div>
+    </details>
+    <p class="prototype-note">Research prototype, not a guarantee of product quality. Search excerpts are attributed; grounded text expires after 15 minutes. Cart actions are simulation-only.</p>
+  </main>
+
+  <!-- ACCESSIBLE MODAL FOR SVG CARDS, LIVE BAT SCREENSHOTS & SKILL.MD INSPECTION -->
+  <dialog class="modal-backdrop" id="modal-backdrop" aria-labelledby="modal-title" onclick="if (event.target === this) closeModal();">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+        <strong id="modal-title">Inspector</strong>
+        <button type="button" class="btn-secondary" id="modal-close-btn" onclick="closeModal()">Close ✕</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </dialog>
+
+  <script>
+    let SCENARIOS = [];
+    let SITE_MATRIX = [];
+    let SELECTED_SCENARIO_KEY = '';
+    let SKILLS_CACHE = {};
+    let CURRENT_CART_GATE = null;
+    let EVENT_COUNT = 0;
+    let RUNNING = false;
+    let CSRF_TOKEN = '';
+    let AUTH_REQUIRED = false;
+    let CHROME_EXTENSION_READY = false;
+    let CHROME_EXTENSION_VERSION = '';
+    const METHOD_LABELS = {
+      vm_playwright: 'Azure VM + Playwright',
+      client_browser: 'Local Playwright',
+      live: 'Azure BAT Tool',
+      webiq_browse: 'WebIQ Browse',
+      search_only: 'Search-only reviews',
+      sample: 'Sample walkthrough'
+    };
+    const TIMELINE_STEPS = [
+      ['listing', 'Inspect the product listing', 'Observed identity, offer and seller claims'],
+      ['discovery', 'Search relevant review sites', 'Queries, display-limited retrieval responses and discovered links'],
+      ['browsing', 'Inspect the discovered sites with the same method', 'Each unique URL, selected inspector, fetched content and access status'],
+      ['synthesis', 'Check claims and build a buying brief', 'Evidence, trade-offs and unresolved gaps'],
+      ['approval', 'Review the human approval gate', 'Simulation only; checkout remains blocked']
+    ];
+    const STAGE_STEPS = {
+      digest_product_url: 'listing', listing_digestion: 'listing',
+      webiq_search: 'discovery', review_source_summary: 'discovery',
+      permitted_source_browsing: 'browsing',
+      synthesize_verdict: 'synthesis', claim_reality_matrix: 'synthesis',
+      cart_gate: 'approval', cart_approval: 'approval',
+      sample_listing_baseline: 'listing', sample_claim_extraction: 'listing',
+      custom_url_notice: 'listing', simulated_cart_confirmation: 'approval'
+    };
+    let ACTIVE_RESEARCH = null;
+    let COMPARISON_RUNS = [];
+    let RUN_SEQUENCE = 0;
+    let PREVIEW_SEQUENCE = 0;
+    const COMPARISON_TTL_MS = 15 * 60 * 1000;
+
+    function mountResearchTimeline() {
+      const timeline = document.getElementById('research-timeline');
+      TIMELINE_STEPS.forEach(([id, title, hint], index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <details class="timeline-step" id="timeline-${id}" data-state="queued">
+            <summary><span class="timeline-number" aria-hidden="true">${index + 1}</span>
+              <span class="timeline-label"><strong>${escapeHtml(title)}</strong><small id="timeline-hint-${id}">${escapeHtml(hint)}</small></span>
+              <span class="badge neutral" id="timeline-status-${id}">Not started</span>
+            </summary>
+            <div class="timeline-content" id="timeline-content-${id}">
+              <p class="timeline-objective" id="timeline-objective-${id}"></p>
+              <div class="timeline-evidence" id="timeline-evidence-${id}"></div>
+              <div class="gallery-grid timeline-captures" id="timeline-captures-${id}"></div>
+              <details><summary>Step activity</summary><div class="timeline-events" id="timeline-events-${id}"></div></details>
+            </div>
+          </details>`;
+        if (id === 'approval') {
+          li.querySelector('details').classList.add('post-research-action');
+          li.querySelector('details').hidden = true;
+          li.querySelector('.timeline-number').textContent = '+';
+          document.getElementById('research-timeline-card').after(li.firstElementChild);
+        } else {
+          timeline.appendChild(li);
+        }
+      });
+      const place = (node, step) => document.getElementById(`timeline-content-${step}`).appendChild(node);
+      place(document.getElementById('baseline-meta'), 'listing');
+      place(document.getElementById('sources-card'), 'discovery');
+      place(document.getElementById('browsed-sources-wrap'), 'browsing');
+      place(document.getElementById('matrix-card'), 'synthesis');
+      place(document.getElementById('signals-card'), 'synthesis');
+      place(document.getElementById('cart-gate-card'), 'approval');
+      document.getElementById('advanced-drawer').appendChild(document.getElementById('gallery-card'));
+      const overview = document.getElementById('research-overview');
+      overview.before(document.getElementById('verdict-card'));
+      document.querySelector('#advanced-drawer > div').prepend(document.getElementById('connection-status'));
+      document.getElementById('research-settings').appendChild(document.querySelector('.mode-banner'));
+      document.getElementById('research-form').appendChild(document.getElementById('research-settings'));
+      const methods = document.querySelector('.mode-toggle-row');
+      ['webiq-browse', 'live', 'client-browser', 'vm-playwright', 'search-only', 'sample'].forEach(name =>
+        methods.appendChild(document.getElementById(`mode-opt-${name}`)));
+      document.getElementById('verdict-card').before(document.getElementById('status-strip'));
+    }
+
+    function toggleTimeline(open) {
+      document.querySelectorAll('.timeline-step').forEach(step => step.open = open);
+    }
+
+    function optionLabels(options) {
+      return [METHOD_LABELS[options.mode], options.search,
+        ...(options.communityExploration ? ['Agent-guided communities'] : []),
+        ...(options.mode === 'search_only' ? [`Listing only: ${METHOD_LABELS[options.seedInspector]}`] : [])];
+    }
+
+    function selectedResearchOptions() {
+      const mode = getExecutionMode();
+      const hasKey = Boolean(document.getElementById('webiq-key').value.trim());
+      return {
+        mode,
+        seedInspector: getSeedInspector(),
+        inspectReviewPages: mode !== 'search_only',
+        communityExploration: communityRequestOptions().community_exploration,
+        explorationDomains: communityRequestOptions().exploration_domains || [],
+        search: hasKey ? 'WebIQ Search (Path 1)' : (mode === 'sample' ? 'Sample discovery' : 'Toolbox web_search (Path 2)'),
+        productUrl: document.getElementById('product-url').value.trim(),
+        intent: document.getElementById('user-intent').value.trim(),
+        webQuery: document.getElementById('webiq-query').value.trim(),
+      };
+    }
+
+    function setTimelineState(id, state, text) {
+      if (!ACTIVE_RESEARCH) return;
+      ACTIVE_RESEARCH.steps[id] = state;
+      const step = document.getElementById(`timeline-${id}`);
+      step.dataset.state = state;
+      const progress = document.getElementById(`progress-${id}`);
+      if (progress) {
+        progress.dataset.state = state;
+        if (state === 'running') progress.setAttribute('aria-current', 'step');
+        else progress.removeAttribute('aria-current');
+      }
+      if (state === 'running') step.setAttribute('aria-busy', 'true');
+      else step.removeAttribute('aria-busy');
+      const badge = document.getElementById(`timeline-status-${id}`);
+      badge.className = 'badge ' + ({complete: 'emerald', running: 'violet', limited: 'amber', error: 'rose'}[state] || 'neutral');
+      badge.textContent = text || ({complete: 'Evidence received', running: 'In progress', limited: 'Limited', error: 'Failed', skipped: 'Not performed'}[state] || 'Not started');
+    }
+
+    function stepEvidence(id, text) {
+      const p = document.createElement('p');
+      p.textContent = text;
+      document.getElementById(`timeline-evidence-${id}`).appendChild(p);
+    }
+
+    function beginResearchTimeline(options) {
+      document.getElementById('saved-research-status').replaceChildren();
+      document.getElementById('saved-research-status').hidden = true;
+      ACTIVE_RESEARCH = {
+        options, started: Date.now(), steps: {}, current: 'listing', captures: new Set(),
+        sources: 0, inspected: 0, restricted: 0, inspectionRows: new Map(), screenshots: new Map(),
+        claims: 0, gaps: 0, baseline: 'Not received',
+        provenance: 'Not received', searchProvenance: 'Not received', hasError: false
+      };
+      document.getElementById('research-overview').hidden = false;
+      document.getElementById('research-timeline-card').hidden = false;
+      document.getElementById('run-options').innerHTML = optionLabels(options).map(label => `<span class="badge neutral">${escapeHtml(label)}</span>`).join('');
+      document.getElementById('review-inspection-heading').textContent = options.inspectReviewPages
+        ? `Discovered-page inspection: ${METHOD_LABELS[options.mode]}` : 'Discovered-page inspection: skipped by choice';
+      document.getElementById('run-input-context').textContent = `${options.productUrl} | Priorities: ${options.intent}`;
+      document.getElementById('run-outcome').textContent = 'Running';
+      document.getElementById('research-overview-heading').textContent = 'Research in progress';
+      document.getElementById('search-results-summary').textContent = 'Waiting for search discovery.';
+      document.getElementById('baseline-meta').replaceChildren();
+      TIMELINE_STEPS.forEach(([id, , hint]) => {
+        document.getElementById(`timeline-hint-${id}`).textContent = hint;
+        for (const part of ['evidence', 'events', 'captures', 'objective']) {
+          document.getElementById(`timeline-${part}-${id}`).replaceChildren();
+        }
+        setTimelineState(id, 'queued');
+        document.getElementById(`timeline-${id}`).open = false;
+      });
+      document.getElementById('timeline-objective-browsing').textContent = options.inspectReviewPages
+        ? `Use ${METHOD_LABELS[options.mode]} for eligible search results${options.communityExploration ? ', then let the agent choose community searches, links and scrolls beyond those results' : ''}. No cross-method fallback.`
+        : `Inspect only the initial listing with ${METHOD_LABELS[options.seedInspector]}. Discovered review URLs will not be opened; synthesis uses search grounding.`;
+      document.getElementById('timeline-approval').hidden = true;
+      document.getElementById('research-overview-heading').focus({preventScroll: true});
+      document.getElementById('research-overview').scrollIntoView({block: 'start'});
+    }
+
+    function timelineActivity(evt) {
+      if (!ACTIVE_RESEARCH || ACTIVE_RESEARCH.finished) return;
+      let id = ACTIVE_RESEARCH.current;
+      if (evt.type === 'skill_loaded') {
+        id = ({
+          'product-listing-digestion': 'listing', 'multi-platform-review-discovery': 'discovery',
+          'claim-reality-matrix': 'synthesis',
+          'human-gated-cart-action': 'approval'
+        })[evt.skill] || id;
+      }
+      if (evt.type === 'activity') {
+        id = ({
+          listing_baseline: 'listing', foundry_access_notice: 'listing', query_plan: 'discovery',
+          review_discovery: 'discovery', permitted_source_browsing: 'browsing',
+        })[evt.kind] || id;
+      }
+      if (evt.type === 'status') {
+        id = STAGE_STEPS[evt.stage] || id;
+        if (STAGE_STEPS[evt.stage]) {
+          ACTIVE_RESEARCH.current = id;
+          setTimelineState(id, 'running');
+        }
+      } else if (evt.type === 'product_baseline') {
+        id = 'listing';
+        const b = evt.baseline;
+        ACTIVE_RESEARCH.baseline = b.data_provenance || 'Unverified';
+        const sample = ACTIVE_RESEARCH.baseline === 'sample_fixture';
+        const limited = !sample && (/restricted|unverified|seed|custom/i.test(ACTIVE_RESEARCH.baseline) || Boolean(b.limitation_notice));
+        setTimelineState(id, limited ? 'limited' : 'complete', sample ? 'Illustrative fixture' : (limited ? 'Restricted / unverified' : 'Listing received'));
+        stepEvidence(id, (b.seller_claims || []).length ? `${sample ? 'Illustrative' : 'Observed'} seller claims: ${b.seller_claims.join(' | ')}` : 'No seller claims received.');
+      } else if (evt.type === 'query_plan') {
+        id = 'discovery';
+        const plan = evt.query_plan || {};
+        stepEvidence(id, `Planned web query: ${plan.primary_webiq_query || plan.primary_web_query || 'Not supplied'}`);
+        if (plan.secondary_web_query) stepEvidence(id, `Planned supplementary query: ${plan.secondary_web_query}`);
+        if (plan.supplementary_queries?.length) stepEvidence(id, `Supplementary queries: ${plan.supplementary_queries.join(' | ')}`);
+      } else if (evt.type === 'enrichment') {
+        id = 'discovery';
+        ACTIVE_RESEARCH.sources = (evt.sources || []).length;
+        ACTIVE_RESEARCH.searchProvenance = evt.provenance || 'Unverified';
+        const summary = `${ACTIVE_RESEARCH.sources} review sources. ${evt.message || ''}`;
+        document.getElementById('search-results-summary').textContent = summary;
+        document.getElementById(`timeline-hint-${id}`).textContent = `${ACTIVE_RESEARCH.sources} discovered review pages`;
+        setTimelineState(id, evt.status === 'failed' ? 'error' : (ACTIVE_RESEARCH.sources ? 'complete' : 'limited'));
+        if (evt.web_query) stepEvidence(id, `Executed web query: ${evt.web_query}`);
+      } else if (evt.type === 'source_inspection') {
+        id = 'browsing';
+        const source = evt.source || {};
+        ACTIVE_RESEARCH.inspectionRows.set(source.requested_url || source.url, source);
+        const completed = [...ACTIVE_RESEARCH.inspectionRows.values()].filter(s => s.status !== 'inspecting').length;
+        document.getElementById(`timeline-hint-${id}`).textContent =
+          `${METHOD_LABELS[evt.inspection_method] || evt.inspection_method}: ${completed}/${evt.total} URLs resolved`;
+      } else if (evt.type === 'community_exploration') {
+        id = 'browsing';
+        ACTIVE_RESEARCH.community = evt;
+        if (evt.phase === 'completed' || evt.phase === 'error') {
+          stepEvidence(id, `Community exploration: ${evt.status}. ${evt.pages || 0} pages (${evt.new_pages || 0} beyond initial results), ${evt.discussion_blocks || 0} discussion blocks observed. ${evt.stop_reason || ''}`);
+          if (evt.status !== 'completed') setTimelineState(id, 'limited');
+        } else if (evt.phase === 'started') {
+          stepEvidence(id, `Agent-guided exploration enabled for ${(evt.domains || []).join(', ')}. General web discovery remains open.`);
+        } else if (evt.phase === 'decision') {
+          const item = document.createElement('div');
+          item.className = 'timeline-event community-decision';
+          item.textContent = `Agent action ${evt.step}: ${evt.action} ${evt.url || evt.domain || ''} | Goal: ${evt.goal} | Why: ${evt.reason}`;
+          document.getElementById('timeline-events-browsing').appendChild(item);
+        }
+      } else if (evt.type === 'inspection_skipped') {
+        id = 'browsing';
+        ACTIVE_RESEARCH.current = id;
+        ACTIVE_RESEARCH.inspectionSkipped = true;
+        setTimelineState(id, 'skipped', 'Skipped by choice');
+        document.getElementById(`timeline-hint-${id}`).textContent = `${evt.discovered || 0} discovered / 0 review pages opened`;
+        stepEvidence(id, evt.reason || 'Search-only reviews selected; discovered pages were not opened.');
+      } else if (evt.type === 'browsed_sources') {
+        id = 'browsing';
+        ACTIVE_RESEARCH.inspected = (evt.sources || []).filter(s => s.access_status === 'inspected').length;
+        ACTIVE_RESEARCH.restricted = (evt.sources || []).length - ACTIVE_RESEARCH.inspected;
+        setTimelineState(id, ACTIVE_RESEARCH.inspected && !ACTIVE_RESEARCH.restricted ? 'complete' : 'limited');
+        document.getElementById(`timeline-hint-${id}`).textContent = `${ACTIVE_RESEARCH.inspected} inspected / ${ACTIVE_RESEARCH.restricted} not inspected`;
+      } else if (evt.type === 'claim_matrix') {
+        id = 'synthesis';
+        ACTIVE_RESEARCH.claims = (evt.matrix || []).length;
+        ACTIVE_RESEARCH.gaps = (evt.evidence_gaps || []).length;
+        ACTIVE_RESEARCH.provenance = evt.run_mode || 'Unverified';
+        if (evt.evidence_metrics) ACTIVE_RESEARCH.evidenceMetrics = {
+          search_content_characters: Number(evt.evidence_metrics.search_content_characters || 0),
+          inspected_context_characters: Number(evt.evidence_metrics.inspected_context_characters || 0)
+        };
+        setTimelineState(id, ACTIVE_RESEARCH.gaps ? 'limited' : 'complete');
+        document.getElementById(`timeline-hint-${id}`).textContent =
+          `${evt.model_deployment || 'Synthesis'}: ${evt.synthesis_status || 'results received'} / ${ACTIVE_RESEARCH.claims} claim checks / ${ACTIVE_RESEARCH.gaps} gaps`;
+      } else if (evt.type === 'cart_gate') {
+        id = 'approval';
+        ACTIVE_RESEARCH.current = id;
+        setTimelineState(id, 'complete', 'Gate ready (simulation)');
+      } else if (evt.type === 'error') {
+        ACTIVE_RESEARCH.hasError = true;
+        setTimelineState(id, 'error');
+        document.getElementById(`timeline-${id}`).open = true;
+      }
+      if (['activity', 'error', 'client_browser_command', 'skill_loaded', 'source_inspection'].includes(evt.type)) {
+        if (evt.kind && /notice|error|unavailable/.test(evt.kind)) {
+          setTimelineState(id, 'limited');
+        }
+        const line = document.createElement('div');
+        line.className = 'timeline-event';
+        const label = evt.type === 'source_inspection'
+          ? `${METHOD_LABELS[evt.inspection_method] || evt.inspection_method}: ${evt.source?.status} — ${evt.source?.requested_url || evt.source?.url}`
+          : evt.label || evt.message || (evt.skill ? `Loaded skill: ${evt.skill}` : `${evt.action || 'Browser'} ${evt.url || ''}`);
+        line.innerHTML = `<time>${escapeHtml(new Date().toLocaleTimeString())}</time><strong>${escapeHtml(label)}</strong>
+          <div>${escapeHtml(evt.detail || '')}</div>${evt.provenance ? `<code>${escapeHtml(evt.provenance)}</code>` : ''}`;
+        const events = document.getElementById(`timeline-events-${id}`);
+        events.appendChild(line);
+        if (events.children.length > 100) events.firstElementChild.remove();
+      }
+      if (evt.type === 'done') finishResearchTimeline(evt.outcome || 'error');
+    }
+
+    function finishResearchTimeline(outcome) {
+      const run = ACTIVE_RESEARCH;
+      if (!run || run.finished) return;
+      discardWebIqGrounding();
+      const failed = outcome === 'error' || run.hasError;
+      TIMELINE_STEPS.forEach(([id]) => {
+        if (run.steps[id] === 'running') setTimelineState(id, failed ? 'error' : 'limited', failed ? 'Interrupted' : 'No evidence received');
+        if (run.steps[id] === 'queued') {
+          setTimelineState(id, 'skipped', failed ? 'Not reached' : 'Not performed');
+          stepEvidence(id, failed ? 'The run ended before this step produced evidence.' : 'No execution evidence was received for this step.');
+        }
+      });
+      run.finished = true;
+      const limited = outcome === 'partial' || Object.values(run.steps).includes('limited');
+      const label = failed ? 'Failed' : (limited ? 'Completed with gaps' : 'Completed');
+      document.getElementById('run-outcome').textContent = label;
+      document.getElementById('research-overview-heading').textContent = failed ? 'Research stopped' : 'Research coverage';
+      document.getElementById('health-pill').textContent = `${METHOD_LABELS[run.options.mode]}: ${label}`;
+      if (run.searchProvenance === 'Not received') {
+        document.getElementById('search-results-summary').textContent = 'No completed search discovery was received. Expand the failed step for details.';
+      }
+      if (run.options.mode !== 'sample') {
+        COMPARISON_RUNS.push({
+          id: ++RUN_SEQUENCE, expires: Date.now() + COMPARISON_TTL_MS, options: {...run.options},
+          outcome: label, elapsed: `${((Date.now() - run.started) / 1000).toFixed(1)}s`,
+          sources: run.sources, inspected: run.inspected,
+          restricted: run.restricted, captures: run.captures.size,
+          inspectionSkipped: Boolean(run.inspectionSkipped), evidenceMetrics: run.evidenceMetrics,
+          baseline: run.baseline, searchProvenance: run.searchProvenance,
+          provenance: run.provenance, claims: run.claims, gaps: run.gaps
+        });
+      }
+      renderRunComparisons();
+    }
+
+    function clearComparisons() {
+      COMPARISON_RUNS = [];
+      renderRunComparisons();
+    }
+
+    function renderRunComparisons() {
+      COMPARISON_RUNS = COMPARISON_RUNS.filter(run => run.expires > Date.now()).slice(-5);
+      const runs = COMPARISON_RUNS;
+      document.getElementById('comparison-card').hidden = runs.length === 0;
+      document.getElementById('compare-runs-link').hidden = runs.length === 0;
+      const warning = document.getElementById('comparison-warning');
+      warning.textContent = runs.length > 1 && runs.some(run =>
+        run.options.productUrl !== runs[0].options.productUrl || run.options.intent !== runs[0].options.intent ||
+        run.options.search !== runs[0].options.search ||
+        run.options.inspectReviewPages !== runs[0].options.inspectReviewPages ||
+        run.options.seedInspector !== runs[0].options.seedInspector ||
+        run.options.communityExploration !== runs[0].options.communityExploration ||
+        JSON.stringify(run.options.explorationDomains) !== JSON.stringify(runs[0].options.explorationDomains) ||
+        run.options.webQuery !== runs[0].options.webQuery)
+        ? 'Inputs or research options differ. These runs are not a controlled method comparison.' : '';
+      const target = document.getElementById('run-comparisons');
+      target.replaceChildren();
+      document.getElementById('clear-comparisons').disabled = runs.length === 0;
+      if (!runs.length) {
+        target.textContent = 'Complete a live run, then change the research method and run again. Sample runs are excluded.';
+        return;
+      }
+      const rows = [
+        ['Product URL', r => r.options.productUrl], ['Priorities', r => r.options.intent],
+        ['Search path', r => r.options.search],
+        ['Community exploration', r => r.options.communityExploration
+          ? `Enabled: ${(r.options.explorationDomains || []).join(', ')}` : 'Off'],
+        ['Initial listing inspector', r => METHOD_LABELS[r.options.seedInspector]],
+        ['Query override', r => r.options.webQuery || 'Automatic'],
+        ['Outcome / elapsed', r => `${r.outcome} / ${r.elapsed}`],
+        ['Listing provenance', r => r.baseline], ['Discovery provenance', r => r.searchProvenance],
+        ['Discovered sources', r => `${r.sources} review pages`],
+        ['Review pages', r => r.inspectionSkipped ? 'Skipped by choice; 0 review pages opened' : `${r.inspected} inspected / ${r.restricted} not inspected`],
+        ['Gross grounding / inspected context', r => r.evidenceMetrics
+          ? `${r.evidenceMetrics.search_content_characters} / ${r.evidenceMetrics.inspected_context_characters} characters (volume, not unique facts)`
+          : 'Metrics not recorded'],
+        ['Capture records', r => `${r.captures} (see current timeline for capture type)`],
+        ['Claim checks / gaps', r => `${r.claims} checks / ${r.gaps} explicit gaps`],
+        ['Result provenance', r => r.provenance]
+      ];
+      target.innerHTML = `<table class="comparison-table"><caption>Live run coverage; counts are not a quality score</caption>
+        <thead><tr><th scope="col">Research detail</th>${runs.map(r => `<th scope="col">Run ${r.id}: ${escapeHtml(METHOD_LABELS[r.options.mode])}<br><button type="button" class="btn-secondary" data-remove-run="${r.id}">Remove run ${r.id}</button></th>`).join('')}</tr></thead>
+        <tbody>${rows.map(([label, value]) => `<tr><th scope="row">${escapeHtml(label)}</th>${runs.map(r => `<td>${escapeHtml(value(r))}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+      target.querySelectorAll('[data-remove-run]').forEach(button => button.onclick = () => {
+        COMPARISON_RUNS = COMPARISON_RUNS.filter(run => run.id !== Number(button.dataset.removeRun));
+        renderRunComparisons();
+      });
+    }
+
+    window.addEventListener('message', async (event) => {
+      if (event.source !== window || !event.data || typeof event.data !== 'object') return;
+      if (event.data.source !== 'pdd-chrome-extension') return;
+
+      if (event.data.type === 'PDD_EXT_READY') {
+        CHROME_EXTENSION_READY = true;
+        CHROME_EXTENSION_VERSION = event.data.version || '1.0.0';
+        const extPill = document.getElementById('chrome-ext-pill');
+        if (extPill) {
+          extPill.className = 'badge emerald';
+          extPill.textContent = `🧩 Chrome Extension Connected (v${CHROME_EXTENSION_VERSION})`;
+        }
+        const extSub = document.getElementById('ext-mode-subpill');
+        if (extSub) {
+          extSub.className = 'badge emerald';
+          extSub.textContent = 'Connected';
+        }
+        updateInputModeBadge();
+      } else if (event.data.type === 'PDD_BROWSER_OBSERVATION' && event.data.observation) {
+        await forwardExtensionObservationToServer(event.data.observation);
+      }
+    });
+
+    async function forwardExtensionObservationToServer(observation) {
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (CSRF_TOKEN) headers['X-CSRF-Token'] = CSRF_TOKEN;
+        await fetch('/api/client-browser/observation', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(observation)
+        });
+      } catch (err) {
+        logActivity('EXTENSION_ERROR', `Failed to upload browser observation: ${String(err)}`);
+      }
+    }
+
+    async function dispatchClientBrowserCommand(cmd) {
+      if (cmd.target === 'vm_worker') {
+        if (cmd.action !== 'close') {
+          logActivity(
+            'VM_PLAYWRIGHT_CHROME',
+            `Dispatched to Windows VM Native Chrome + Playwright worker (${cmd.action}): ${cmd.capture_title || cmd.url || ''}`,
+            cmd.url || ''
+          );
+        }
+        return;
+      }
+      if (cmd.action === 'close') {
+        window.postMessage(
+          { source: 'pdd-portal-page', type: 'PDD_BROWSER_COMMAND', command: cmd },
+          window.location.origin
+        );
+        return;
+      }
+      logActivity(
+        'CHROME_EXTENSION',
+        `Navigating your Chrome tab (${cmd.action}): ${cmd.capture_title || cmd.url || ''}`,
+        cmd.url || ''
+      );
+      if (!CHROME_EXTENSION_READY) {
+        // Ping once and wait 1.5s in case extension just loaded
+        window.postMessage({ source: 'pdd-portal-page', type: 'PDD_EXT_PING' }, window.location.origin);
+        await new Promise(r => setTimeout(r, 1500));
+      }
+      if (!CHROME_EXTENSION_READY) {
+        await forwardExtensionObservationToServer({
+          run_id: cmd.run_id,
+          command_id: cmd.command_id,
+          url: cmd.url || '',
+          title: 'Chrome Extension Not Connected',
+          status_code: 0,
+          headings: [],
+          body_excerpt: '',
+          candidate_lines: [],
+          screenshot_data_url: null,
+          error: 'Product Due-Diligence Chrome Extension is not connected in this tab. Load browser_extension/ in chrome://extensions and refresh this page.'
+        });
+        return;
+      }
+      window.postMessage(
+        { source: 'pdd-portal-page', type: 'PDD_BROWSER_COMMAND', command: cmd },
+        window.location.origin
+      );
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    async function logoutSession() {
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (CSRF_TOKEN) headers['X-CSRF-Token'] = CSRF_TOKEN;
+        await fetch('/api/auth/logout', { method: 'POST', headers });
+      } catch (_) {}
+      window.location.replace('/login');
+    }
+
+    async function initPortal() {
+      try {
+        const [healthRes, scenRes, skillsRes] = await Promise.all([
+          fetch('/api/health'),
+          fetch('/api/scenarios'),
+          fetch('/api/skills')
+        ]);
+        if ([healthRes, scenRes, skillsRes].some(res => res.status === 401)) {
+          window.location.replace('/login');
+          return;
+        }
+        if (![healthRes, scenRes, skillsRes].every(res => res.ok)) {
+          throw new Error('Could not load the portal setup.');
+        }
+        const health = await healthRes.json();
+        AUTH_REQUIRED = Boolean(health.auth_required);
+        CSRF_TOKEN = health.csrf_token || '';
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.style.display = AUTH_REQUIRED ? 'inline-flex' : 'none';
+        }
+        document.getElementById('health-pill').textContent =
+          'Research workspace ready';
+        renderCapabilities(health.capabilities || {});
+
+        const scenData = await scenRes.json();
+        SCENARIOS = scenData.scenarios || [];
+        SITE_MATRIX = scenData.site_compatibility_matrix || [];
+        renderScenarioPills();
+        renderCompatibilityMatrix();
+
+        const skillsData = await skillsRes.json();
+        for (const s of (skillsData.skills || [])) {
+          SKILLS_CACHE[s.name] = s;
+        }
+        if (SCENARIOS.length > 0) renderStoreTargets(SCENARIOS[0], '');
+        updateInputModeBadge();
+        refreshVmWorkerStatus();
+        setInterval(refreshVmWorkerStatus, 12000);
+      } catch (err) {
+        document.getElementById('health-pill').textContent = 'API Offline';
+        showStatus('The portal could not connect. Refresh to retry, or check that the local server is running.', true);
+      }
+    }
+
+    function renderCapabilities(caps) {
+      const container = document.getElementById('capabilities-list');
+      container.innerHTML = '';
+      Object.entries(caps).forEach(([key, val]) => {
+        const div = document.createElement('div');
+        div.className = 'cap-item';
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px; font-weight:700;">
+            <span>${escapeHtml(key.replace(/_/g, ' '))}</span>
+            <span class="badge amber">${escapeHtml(val.label)}</span>
+          </div>
+          <div style="color:var(--muted); margin-top:5px;">${escapeHtml(val.detail)}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderCompatibilityMatrix() {
+      const tbody = document.getElementById('compat-matrix-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      SITE_MATRIX.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${escapeHtml(row.site)}</strong><div style="font-size:0.71rem; color:var(--muted);">${escapeHtml(row.category || '')}</div></td>
+          <td>${escapeHtml(row.azure_vm_playwright || '')}</td>
+          <td>${escapeHtml(row.local_playwright || '')}</td>
+          <td>${escapeHtml(row.azure_bat_tool || '')}</td>
+          <td>${escapeHtml(row.webiq_browse || row.webiq || '')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderScenarioPills() {
+      const container = document.getElementById('scenario-pills');
+      container.innerHTML = '';
+      SCENARIOS.forEach((s, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pill-btn' + (idx === 0 ? ' active' : '');
+        btn.dataset.key = s.key;
+        btn.innerHTML = `<span>🛍️ ${escapeHtml(s.title)}</span> <span style="font-size:0.72rem; color:var(--muted);">(${escapeHtml(s.short_label || 'Preset')})</span>`;
+        btn.onclick = () => selectScenario(s.key);
+        container.appendChild(btn);
+      });
+    }
+
+    function renderStoreTargets(scen, activeUrl) {
+      const container = document.getElementById('store-target-pills');
+      if (!container) return;
+      container.innerHTML = '';
+      const targets = (scen && scen.store_targets) || [];
+      const normActive = (activeUrl || '').trim().replace(/\/+$/, '').toLowerCase();
+      targets.forEach(t => {
+        const normTarget = (t.url || '').trim().replace(/\/+$/, '').toLowerCase();
+        const isActive = normActive && normActive === normTarget;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'store-target-btn' + (isActive ? ' active' : '');
+        btn.dataset.storeId = t.store_id;
+        btn.dataset.url = t.url;
+        const recLabel = t.recommended_mode === 'vm_playwright'
+          ? '🖥️ Best: Windows VM / Chrome Ext'
+          : '🧩 Best: My Chrome / Sample';
+        btn.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:6px;">
+            <strong style="font-size:0.82rem; color:var(--text);">${escapeHtml(t.label)}</strong>
+            <span class="badge ${t.recommended_mode === 'vm_playwright' ? 'emerald' : 'amber'}" style="font-size:0.67rem;">${escapeHtml(recLabel)}</span>
+          </div>
+          <div style="font-size:0.74rem; color:var(--text-secondary);">
+            <code>${escapeHtml(t.domain || '')}</code> • <strong>${escapeHtml(t.observed_price_hint || '')}</strong>
+          </div>
+          <div style="font-size:0.72rem; color:var(--muted); line-height:1.3;">${escapeHtml(t.note || '')}</div>
+        `;
+        btn.onclick = () => selectStoreTarget(scen.key, t.store_id);
+        container.appendChild(btn);
+      });
+    }
+
+    let VM_WORKER_ONLINE = false;
+    let VM_WORKER_HOST = '';
+
+    async function refreshVmWorkerStatus() {
+      try {
+        const res = await fetch('/api/client-browser/status');
+        if (!res.ok) return;
+        const st = await res.json();
+        VM_WORKER_ONLINE = Boolean(st.vm_worker_online);
+        const firstW = (st.workers && st.workers[0]) || {};
+        VM_WORKER_HOST = firstW.hostname || firstW.worker_id || '';
+        const pill = document.getElementById('vm-worker-pill');
+        if (pill) {
+          if (VM_WORKER_ONLINE) {
+            pill.className = 'badge emerald';
+            pill.textContent = `🖥️ Windows VM Chrome Ready (${VM_WORKER_HOST || 'Online'})`;
+          } else {
+            pill.className = 'badge neutral';
+            pill.textContent = '🖥️ Windows VM Worker: Offline';
+          }
+        }
+        const vmSub = document.getElementById('vm-mode-subpill');
+        if (vmSub) {
+          vmSub.className = VM_WORKER_ONLINE ? 'badge emerald' : 'badge neutral';
+          vmSub.textContent = VM_WORKER_ONLINE ? `Online (${VM_WORKER_HOST || 'VM'})` : 'Offline';
+        }
+        updateInputModeBadge();
+      } catch (_) {}
+    }
+
+    function getExecutionMode() {
+      if (document.getElementById('exec-mode-search-only').checked) return 'search_only';
+      const vmRadio = document.getElementById('exec-mode-vm-playwright');
+      if (vmRadio && vmRadio.checked) return 'vm_playwright';
+      const clientRadio = document.getElementById('exec-mode-client-browser');
+      if (clientRadio && clientRadio.checked) return 'client_browser';
+      const liveRadio = document.getElementById('exec-mode-live');
+      if (liveRadio && liveRadio.checked) return 'live';
+      const webiqBrowseRadio = document.getElementById('exec-mode-webiq-browse');
+      if (webiqBrowseRadio && webiqBrowseRadio.checked) return 'webiq_browse';
+      return 'sample';
+    }
+
+    function getSeedInspector() {
+      return getExecutionMode() === 'search_only'
+        ? document.getElementById('initial-inspector').value : getExecutionMode();
+    }
+
+    function setExecutionMode(mode) {
+      const isVm = mode === 'vm_playwright';
+      const isClient = mode === 'client_browser';
+      const isLive = mode === 'live';
+      const isWebiqBrowse = mode === 'webiq_browse';
+      const isSearchOnly = mode === 'search_only';
+      const isSample = !isVm && !isClient && !isLive && !isWebiqBrowse && !isSearchOnly;
+      const vmRadio = document.getElementById('exec-mode-vm-playwright');
+      const clientRadio = document.getElementById('exec-mode-client-browser');
+      const liveRadio = document.getElementById('exec-mode-live');
+      const webiqBrowseRadio = document.getElementById('exec-mode-webiq-browse');
+      const sampleRadio = document.getElementById('exec-mode-sample');
+      if (vmRadio) vmRadio.checked = isVm;
+      if (clientRadio) clientRadio.checked = isClient;
+      if (liveRadio) liveRadio.checked = isLive;
+      if (webiqBrowseRadio) webiqBrowseRadio.checked = isWebiqBrowse;
+      document.getElementById('exec-mode-search-only').checked = isSearchOnly;
+      if (sampleRadio) sampleRadio.checked = isSample;
+      onExecutionModeChanged();
+    }
+
+    function onExecutionModeChanged() {
+      const mode = getExecutionMode();
+      document.getElementById('mode-opt-vm-playwright')?.classList.toggle('active', mode === 'vm_playwright');
+      document.getElementById('mode-opt-client-browser')?.classList.toggle('active', mode === 'client_browser');
+      document.getElementById('mode-opt-live')?.classList.toggle('active', mode === 'live');
+      document.getElementById('mode-opt-webiq-browse')?.classList.toggle('active', mode === 'webiq_browse');
+      document.getElementById('mode-opt-search-only').classList.toggle('active', mode === 'search_only');
+      document.getElementById('mode-opt-sample')?.classList.toggle('active', mode === 'sample');
+      document.getElementById('initial-inspector-wrap').hidden = mode !== 'search_only';
+      const communityEligible = ['live', 'client_browser', 'vm_playwright'].includes(mode);
+      document.getElementById('community-exploration').disabled = !communityEligible;
+      if (!communityEligible) document.getElementById('community-exploration').checked = false;
+      if (!communityEligible) document.getElementById('exploration-domains').setCustomValidity('');
+      document.getElementById('community-domains-wrap').hidden = !document.getElementById('community-exploration').checked;
+      document.getElementById('community-eligibility').textContent = communityEligible
+        ? 'Opt in to model-guided searches, observed links and scrolling using this same browser.'
+        : 'Choose Azure BAT Tool, Local Playwright or Azure VM + Playwright to enable this. Search-only reviews and WebIQ Browse stay unchanged.';
+      const extHelp = document.getElementById('chrome-ext-help-box');
+      if (extHelp) extHelp.style.display = getSeedInspector() === 'client_browser' ? 'block' : 'none';
+      updateInputModeBadge();
+      previewAgentPlan();
+    }
+
+    function communityRequestOptions() {
+      const enabled = ['live', 'client_browser', 'vm_playwright'].includes(getExecutionMode())
+        && document.getElementById('community-exploration').checked;
+      return enabled ? {
+        community_exploration: true,
+        exploration_domains: document.getElementById('exploration-domains').value.split(/[,\n]/)
+          .map(domain => domain.trim()).filter(Boolean),
+      } : {community_exploration: false};
+    }
+
+    function onCommunityOptionsChanged() {
+      const options = communityRequestOptions();
+      document.getElementById('community-domains-wrap').hidden = !options.community_exploration;
+      const domains = options.exploration_domains || [];
+      const valid = !options.community_exploration || (domains.length >= 1 && domains.length <= 8
+        && domains.every(domain => domain.includes('.') && !/[/:@*\s]/.test(domain)
+          && !/^\d+(?:\.\d+){3}$/.test(domain)));
+      document.getElementById('exploration-domains').setCustomValidity(valid ? ''
+        : 'Enter one to eight public domain names, not URLs, paths, wildcards or IP addresses.');
+      previewAgentPlan();
+    }
+
+    function onWebIqKeyChanged() {
+      const hasKey = Boolean(document.getElementById('webiq-key').value.trim());
+      const keyBadge = document.getElementById('webiq-key-status-badge');
+      if (keyBadge) {
+        if (hasKey) {
+          keyBadge.className = 'badge emerald';
+          keyBadge.textContent = 'WebIQ search enabled';
+        } else {
+          keyBadge.className = 'badge neutral';
+          keyBadge.textContent = 'Live discovery: Foundry web search';
+        }
+      }
+      updateInputModeBadge();
+      previewAgentPlan();
+    }
+
+    function selectScenario(key, preferredStoreId = null) {
+      const scen = SCENARIOS.find(s => s.key === key);
+      if (!scen) return;
+      SELECTED_SCENARIO_KEY = key;
+      document.querySelectorAll('.pill-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.key === key);
+      });
+      let targetUrl = scen.product_url;
+      const targets = scen.store_targets || [];
+      if (preferredStoreId) {
+        const found = targets.find(t => t.store_id === preferredStoreId);
+        if (found && found.url) targetUrl = found.url;
+      }
+      document.getElementById('product-url').value = targetUrl;
+      document.getElementById('user-intent').value = scen.user_intent;
+      document.getElementById('webiq-query').value = scen.default_webiq_query || '';
+      renderStoreTargets(scen, targetUrl);
+      updateInputModeBadge();
+      previewAgentPlan();
+    }
+
+    function loadExample() {
+      if (RUNNING) return;
+      const example = SCENARIOS.find(scenario => scenario.key === 'sony-wh1000xm6') || SCENARIOS[0];
+      if (!example) {
+        showStatus('Example products are unavailable. Refresh the page to try again.', true);
+        return;
+      }
+      selectScenario(example.key, 'official');
+      document.getElementById('product-url').focus();
+    }
+
+    function openResearchSettings() {
+      document.getElementById('research-settings').open = true;
+      document.querySelector('input[name="execution-mode"]:checked').focus();
+    }
+
+    function selectStoreTarget(scenarioKey, storeId) {
+      const scen = SCENARIOS.find(s => s.key === scenarioKey);
+      if (!scen) return;
+      const target = (scen.store_targets || []).find(t => t.store_id === storeId);
+      if (!target) return;
+      SELECTED_SCENARIO_KEY = scenarioKey;
+      document.querySelectorAll('.pill-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.key === scenarioKey);
+      });
+      document.getElementById('product-url').value = target.url;
+      document.getElementById('user-intent').value = scen.user_intent;
+      document.getElementById('webiq-query').value = scen.default_webiq_query || '';
+      renderStoreTargets(scen, target.url);
+      const autoSwitch = document.getElementById('auto-switch-recommended-mode')?.checked;
+      if (autoSwitch && target.recommended_mode) {
+        setExecutionMode(target.recommended_mode);
+        return;
+      }
+      updateInputModeBadge();
+      previewAgentPlan();
+    }
+
+    function findMatchingScenarioAndTarget(urlVal) {
+      const norm = (urlVal || '').trim().replace(/\/+$/, '').toLowerCase();
+      if (!norm) return { scenario: null, target: null };
+      for (const s of SCENARIOS) {
+        const sNorm = (s.product_url || '').trim().replace(/\/+$/, '').toLowerCase();
+        const targets = s.store_targets || [];
+        for (const t of targets) {
+          if ((t.url || '').trim().replace(/\/+$/, '').toLowerCase() === norm) {
+            return { scenario: s, target: t };
+          }
+        }
+        if (sNorm === norm) {
+          return { scenario: s, target: null };
+        }
+      }
+      return { scenario: null, target: null };
+    }
+
+    function onUserInputChanged() {
+      const urlVal = document.getElementById('product-url').value.trim();
+      const { scenario: matched } = findMatchingScenarioAndTarget(urlVal);
+      document.querySelectorAll('.pill-btn').forEach(b => {
+        b.classList.toggle('active', Boolean(matched && b.dataset.key === matched.key));
+      });
+      const activeScen = matched || SCENARIOS.find(s => s.key === SELECTED_SCENARIO_KEY) || SCENARIOS[0];
+      if (activeScen) {
+        renderStoreTargets(activeScen, urlVal);
+      }
+      updateInputModeBadge();
+      document.getElementById('webiq-query').value = '';
+    }
+
+    function updateDomainCompatibilityBanner(urlVal, execMode) {
+      const banner = document.getElementById('domain-compat-banner');
+      if (!banner) return;
+      banner.style.display = urlVal && execMode !== 'sample' ? 'block' : 'none';
+      banner.className = 'compat-banner';
+      banner.textContent = execMode === 'webiq_browse'
+        ? 'WebIQ Browse returns extracted text, not viewport screenshots. Indexed content may not be fresh.'
+        : 'Site access can change. The timeline records actual page observations and restrictions; historical results do not guarantee access or current prices.';
+    }
+
+    function updateInputModeBadge() {
+      const options = selectedResearchOptions();
+      document.getElementById('selected-options').innerHTML = optionLabels(options)
+        .filter((label, index) => options.search !== 'Sample discovery' || index === 0)
+        .map(label => label.replace(' (Path 1)', '').replace(' (Path 2)', '').replace('Toolbox web_search', 'Foundry web search'))
+        .map(label => `<span class="badge neutral">${escapeHtml(label)}</span>`).join('');
+      const urlVal = options.productUrl;
+      const execMode = options.mode;
+      const hasKey = Boolean(document.getElementById('webiq-key')?.value.trim());
+      const { scenario: matchedScenario } = findMatchingScenarioAndTarget(urlVal);
+      updateDomainCompatibilityBanner(urlVal, options.seedInspector);
+      const badge = document.getElementById('input-mode-badge');
+      const bannerText = document.getElementById('mode-banner-text');
+      const discovery = hasKey ? 'Web IQ Search (Path 1)' : 'Toolbox web_search (Path 2)';
+      const descriptions = {
+        sample: hasKey ? 'Mixed mode: illustrative baseline with live WebIQ discovery. Not a verified product brief.'
+          : (urlVal && !matchedScenario ? 'Custom URL: a checklist only. Choose a live method to inspect this page.' : 'Sample preview only. No live pages are read or claims verified.'),
+        live: `Cloud browser inspection. Discovery: ${discovery}.`,
+        webiq_browse: hasKey ? 'WebIQ key supplied. Extracted page text, without browser screenshots.'
+          : 'A WebIQ key is required. Add it in Research settings before starting.',
+        client_browser: CHROME_EXTENSION_READY ? 'Local browser connected. Research opens a tab on this device.'
+          : 'Connect the Chrome extension in Research settings before starting.',
+        vm_playwright: VM_WORKER_ONLINE ? 'VM worker online. Research runs in its browser, not on this device.'
+          : 'VM worker offline or not yet confirmed. Check Service connections before retrying.'
+      };
+      const description = execMode === 'search_only'
+        ? `Search-only reviews. Listing: ${METHOD_LABELS[options.seedInspector]}. ${descriptions[options.seedInspector]} Discovery: ${discovery}. Review pages are not opened.`
+        : descriptions[execMode];
+      badge.className = 'method-description';
+      badge.textContent = description;
+      if (bannerText) bannerText.textContent = description + (execMode === 'search_only'
+        ? ' Only the initial listing is inspected.' : ' The same inspector is used for the listing and discovered pages.');
+      document.getElementById('run-btn').textContent = RUNNING ? 'Researching...'
+        : (execMode !== 'sample' ? 'Start research' : (urlVal && !matchedScenario ? 'Create a checklist' : 'Preview sample'));
+    }
+
+    function showStatus(msg, isError = false) {
+      const strip = document.getElementById('status-strip');
+      strip.style.display = 'block';
+      strip.className = 'status-strip' + (isError ? ' error' : '');
+      strip.setAttribute('role', isError ? 'alert' : 'status');
+      strip.setAttribute('aria-live', isError ? 'assertive' : 'polite');
+      strip.textContent = msg;
+    }
+
+    async function previewAgentPlan(reveal = false) {
+      if (RUNNING) return;
+      const previewSequence = ++PREVIEW_SEQUENCE;
+      const product_url = document.getElementById('product-url').value.trim();
+      const user_intent = document.getElementById('user-intent').value.trim();
+      const execution_mode = getSeedInspector();
+      const inspect_review_pages = getExecutionMode() !== 'search_only';
+      const webiq_key = document.getElementById('webiq-key')?.value.trim() || '';
+      if (!product_url || !user_intent) return;
+      const use_client_browser = (execution_mode === 'client_browser' || execution_mode === 'vm_playwright');
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (webiq_key) headers['X-WebIQ-Key'] = webiq_key;
+        if (CSRF_TOKEN) headers['X-CSRF-Token'] = CSRF_TOKEN;
+        const res = await fetch('/api/plan', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ product_url, user_intent, execution_mode, use_client_browser, inspect_review_pages, ...communityRequestOptions() })
+        });
+        if (res.status === 401 && AUTH_REQUIRED) {
+          window.location.replace('/login');
+          return;
+        }
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ detail: 'Invalid URL' }));
+          showStatus(err.detail || 'Check product URL format (must be public HTTPS).', true);
+          return;
+        }
+        const data = await res.json();
+        if (RUNNING || previewSequence !== PREVIEW_SEQUENCE) return;
+        renderPlan(data.plan);
+        if (reveal) {
+          const drawer = document.getElementById('advanced-drawer');
+          drawer.open = true;
+          document.getElementById('plan-steps').scrollIntoView({ block: 'center' });
+          showStatus('Research steps are shown in How it works. No research has been run yet.');
+        }
+      } catch (err) {
+        showStatus('Could not load research steps. Check the connection and try again.', true);
+      }
+    }
+
+    function renderPlan(plan) {
+      const stepsEl = document.getElementById('plan-steps');
+      stepsEl.innerHTML = '';
+      (plan.steps || []).forEach(st => {
+        const div = document.createElement('div');
+        div.className = 'step-item';
+        div.id = `plan-step-${st.id}`;
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; font-weight:700;">
+            <span>Step ${st.step}: ${escapeHtml(st.title)}</span>
+            <span class="badge neutral">${escapeHtml(st.execution_mode || st.skill)}</span>
+          </div>
+          <div style="color:var(--muted); margin-top:4px;">${escapeHtml(st.objective)}</div>
+        `;
+        stepsEl.appendChild(div);
+        const id = ({
+          digest_product_url: 'listing', discover_reviews: 'discovery',
+          permitted_source_browsing: 'browsing',
+          synthesize_verdict: 'synthesis', prepare_cart_gate: 'approval'
+        })[st.id];
+        if (id && ACTIVE_RESEARCH && !ACTIVE_RESEARCH.finished) {
+          document.getElementById(`timeline-objective-${id}`).textContent =
+            `${st.objective || ''}${st.tools?.length ? ' | Tools: ' + st.tools.join(', ') : ''}`;
+        }
+      });
+    }
+
+    function logActivity(kind, label, detail, provenance) {
+      EVENT_COUNT += 1;
+      document.getElementById('event-counter').textContent = `${EVENT_COUNT} events`;
+      const log = document.getElementById('activity-log');
+      const line = document.createElement('div');
+      line.className = 'activity-line';
+      const ts = new Date().toLocaleTimeString();
+      const provTag = provenance ? ` [${provenance}]` : '';
+      line.innerHTML = `<strong>[${ts}] ${escapeHtml(kind)}${escapeHtml(provTag)}:</strong> ${escapeHtml(label)} ${detail ? `<div style="color:var(--muted);">${escapeHtml(detail)}</div>` : ''}`;
+      log.prepend(line);
+    }
+
+    const GROUNDING_EXPIRED = 'Grounding text is no longer available after the workflow; attribution and the generated brief remain.';
+
+    function isWebIqGrounding(source) {
+      return source.provider === 'webiq' || /webiq/i.test(
+        `${source.provider || ''} ${source.provenance || ''} ${source.data_provenance || ''} ${source.inspection_method || ''}`);
+    }
+
+    function discardWebIqGrounding() {
+      if (ACTIVE_RESEARCH) {
+        ACTIVE_RESEARCH.groundingClosed = true;
+        for (const [key, source] of ACTIVE_RESEARCH.inspectionRows) {
+          if (isWebIqGrounding(source)) ACTIVE_RESEARCH.inspectionRows.delete(key);
+        }
+      }
+      document.querySelectorAll('[data-webiq-grounding]').forEach(node => {
+        node.replaceChildren();
+        node.textContent = GROUNDING_EXPIRED;
+        node.dataset.groundingCharacters = '0';
+      });
+    }
+
+    function itemUrls(source) {
+      return [...new Set([source.url, source.requested_url, source.observed_url, source.page_url,
+        source.retrieved_response?.url].filter(Boolean))];
+    }
+
+    function appendRetrievedResponse(parent, source, kind) {
+      const details = document.createElement('details');
+      details.className = 'retrieved-response';
+      const summary = document.createElement('summary');
+      summary.textContent = 'Retrieved response (display-limited)';
+      details.appendChild(summary);
+      const body = document.createElement('div');
+      const webiq = isWebIqGrounding(source);
+      const raw = source.retrieved_response;
+      const fallback = !raw && kind === 'search' && source.snippet
+        ? {title: source.title, url: source.url, content: source.snippet} : null;
+      const response = raw || fallback;
+      const sourceKey = source.url || source.requested_url || response?.url || 'unidentified-source';
+      if (webiq) {
+        body.dataset.webiqGrounding = '';
+        body.dataset.webiqSource = sourceKey;
+      }
+      if (webiq && (ACTIVE_RESEARCH?.groundingClosed || ACTIVE_RESEARCH?.finished)) {
+        body.textContent = GROUNDING_EXPIRED;
+      } else if (response) {
+        const cap = Math.max(0, Math.min(webiq || kind === 'search' ? 200 : 3200,
+          Number(source.content_display_limit ?? (kind === 'search' || webiq ? 200 : 3200)) || 0));
+        // One source has one shared WebIQ display allowance, even across discovery and inspection.
+        const displayed = webiq ? [...document.querySelectorAll('[data-webiq-source]')]
+          .filter(node => node.dataset.webiqSource === sourceKey)
+          .reduce((total, node) => total + Number(node.dataset.groundingCharacters || 0), 0) : 0;
+        const allowed = Math.max(0, webiq ? cap - displayed : cap);
+        const content = Array.from(String(response.content || '')).slice(0, allowed).join('');
+        const projection = {
+          title: response.title || source.title || '', url: response.url || source.url || '', content
+        };
+        if (kind === 'search') {
+          projection.crawledAt = response.crawledAt ?? null;
+          projection.lastUpdatedAt = response.lastUpdatedAt ?? null;
+        } else {
+          if (!webiq && response.headings) projection.headings = response.headings;
+          projection.status = response.status || source.access_status || '';
+          projection.inspection_method = response.inspection_method || source.inspection_method || '';
+        }
+        const note = document.createElement('p');
+        note.textContent = `${fallback ? 'Legacy excerpt projection' : 'Retrieval projection'}, not a full provider response. Display limit: ${cap} characters${source.content_truncated ? '; content truncated' : ''}${source.retrieved_characters != null ? `; ${Number(source.retrieved_characters)} characters retrieved internally` : ''}.`
+          + (webiq ? ' WebIQ grounding is available only during this workflow.' : '');
+        body.appendChild(note);
+        if (webiq && !allowed && response.content) {
+          const message = document.createElement('p');
+          message.textContent = 'The WebIQ display allowance for this source is already used by another response viewer; no additional grounding is repeated.';
+          body.appendChild(message);
+        } else {
+          const pre = document.createElement('pre');
+          pre.textContent = JSON.stringify(projection, null, 2);
+          body.appendChild(pre);
+        }
+        if (webiq) body.dataset.groundingCharacters = String(Array.from(content).length);
+      } else {
+        body.textContent = 'Retrieved response text was not provided or retained. A digest is not a raw response.';
+      }
+      details.appendChild(body);
+      const captures = document.createElement('div');
+      captures.className = 'item-captures';
+      captures.dataset.urls = JSON.stringify(itemUrls(source));
+      captures.dataset.artifactId = source.screenshot_artifact_id || source.artifact_id || '';
+      captures.dataset.kind = kind;
+      details.appendChild(captures);
+      parent.appendChild(details);
+      refreshItemCaptures();
+    }
+
+    function refreshItemCaptures() {
+      const shots = [...(ACTIVE_RESEARCH?.screenshots.values() || [])];
+      document.querySelectorAll('.item-captures').forEach(host => {
+        host.replaceChildren();
+        const urls = JSON.parse(host.dataset.urls || '[]');
+        const matches = shots.filter(shot => shot.is_live_browser_capture && (host.dataset.artifactId
+          ? [shot.id, shot.artifact_id].includes(host.dataset.artifactId)
+          : itemUrls(shot).some(url => urls.includes(url))));
+        if (!matches.length) {
+          host.textContent = host.dataset.kind === 'search'
+            ? 'Search retrieves text, not screenshots. No matching browser capture is available.'
+            : 'No genuine screenshot is available for this item. WebIQ Browse does not produce viewport screenshots.';
+          return;
+        }
+        matches.forEach(shot => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'btn-secondary item-capture-link';
+          button.textContent = `View genuine browser capture: ${shot.title || 'Page viewport'}`;
+          button.onclick = () => openScreenshotModal(shot);
+          host.appendChild(button);
+        });
+      });
+    }
+
+    function appendScreenshot(shot) {
+      const key = shot.artifact_id || shot.id || shot.content_url;
+      if (ACTIVE_RESEARCH?.captures.has(key)) return;
+      if (ACTIVE_RESEARCH) {
+        ACTIVE_RESEARCH.captures.add(key);
+        ACTIVE_RESEARCH.screenshots.set(key, shot);
+      }
+      refreshItemCaptures();
+      const galleryCard = document.getElementById('gallery-card');
+      galleryCard.style.display = 'block';
+      const gallery = document.getElementById('screenshot-gallery');
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'shot-card';
+      card.onclick = () => openScreenshotModal(shot);
+      const isLivePng = Boolean(shot.is_live_browser_capture);
+      const label = shot.provenance_label || (isLivePng ? 'Genuine Browser Screenshot (PNG)' : 'Generated SVG Illustration');
+      card.innerHTML = `
+        <img src="${escapeHtml(shot.content_url)}" alt="${escapeHtml(shot.title)}" />
+        <div class="shot-meta">
+          <div style="font-weight:700;">#${shot.sequence} • ${escapeHtml(shot.title)}</div>
+          <div style="color:${isLivePng ? 'var(--emerald)' : 'var(--muted)'}; font-weight:${isLivePng ? '700' : '400'}; margin-top:2px;">${escapeHtml(label)}</div>
+        </div>
+      `;
+      gallery.appendChild(card);
+      const step = STAGE_STEPS[shot.stage] || ACTIVE_RESEARCH?.current || 'listing';
+      const stepCard = card.cloneNode(true);
+      stepCard.onclick = () => openScreenshotModal(shot);
+      document.getElementById(`timeline-captures-${step}`).appendChild(stepCard);
+      document.getElementById('shot-count-badge').textContent = `${gallery.children.length} capture(s)`;
+    }
+
+    async function startPipelineRun() {
+      if (RUNNING) return;
+      const product_url = document.getElementById('product-url').value.trim();
+      const user_intent = document.getElementById('user-intent').value.trim();
+      const webiq_key = document.getElementById('webiq-key').value.trim();
+      const webiq_query = document.getElementById('webiq-query').value.trim();
+      const execution_mode = getSeedInspector();
+      const inspect_review_pages = getExecutionMode() !== 'search_only';
+      if (!product_url || !user_intent) {
+        showStatus('Please provide both a public HTTPS Product Listing URL and what matters to you.', true);
+        return;
+      }
+      if (execution_mode === 'webiq_browse' && !webiq_key) {
+        showStatus('WebIQ Browse needs a key. Add one below, or choose a browser method that uses Foundry web search.', true);
+        document.getElementById('research-settings').open = true;
+        document.getElementById('webiq-key').focus();
+        return;
+      }
+      if (communityRequestOptions().community_exploration && execution_mode === 'client_browser'
+          && CHROME_EXTENSION_READY && CHROME_EXTENSION_VERSION.localeCompare('1.1.0', undefined, {numeric: true}) < 0) {
+        showStatus('Community exploration needs Chrome bridge 1.1.0 or newer. Download/reload the updated extension and refresh this tab.', true);
+        document.getElementById('research-settings').open = true;
+        return;
+      }
+
+      EVENT_COUNT = 0;
+      RUNNING = true;
+      PREVIEW_SEQUENCE += 1;
+      beginResearchTimeline(selectedResearchOptions());
+      CURRENT_CART_GATE = null;
+      document.getElementById('research-form').setAttribute('aria-busy', 'true');
+      document.querySelectorAll('#research-form input, #research-form textarea, #research-form select, #research-form button, .pill-btn, #load-example-btn').forEach(el => el.disabled = true);
+      const use_client_browser = (execution_mode === 'client_browser' || execution_mode === 'vm_playwright');
+      document.getElementById('health-pill').textContent = `Running: ${METHOD_LABELS[getExecutionMode()]}`;
+      document.getElementById('download-report-link').style.display = 'none';
+      document.getElementById('download-report-link').removeAttribute('href');
+      document.getElementById('event-counter').textContent = '0 events';
+      document.getElementById('empty-state-card').style.display = 'none';
+      document.getElementById('activity-log').innerHTML = '';
+      document.getElementById('plan-steps').innerHTML = '';
+      document.getElementById('shot-count-badge').textContent = '0 captures';
+      document.getElementById('screenshot-gallery').innerHTML = '';
+      document.getElementById('loaded-skills').innerHTML = '';
+      document.getElementById('verdict-card').style.display = 'none';
+      document.getElementById('matrix-card').style.display = 'none';
+      document.getElementById('sources-card').style.display = 'none';
+      document.getElementById('browsed-sources-wrap').style.display = 'none';
+      document.getElementById('browsed-sources-list').innerHTML = '';
+      document.getElementById('signals-card').style.display = 'none';
+      document.getElementById('what-fits-list').replaceChildren();
+      document.getElementById('watch-outs-list').replaceChildren();
+      document.getElementById('evidence-gaps-list').replaceChildren();
+      document.getElementById('matrix-list').replaceChildren();
+      document.getElementById('web-sources-list').replaceChildren();
+      document.getElementById('cart-gate-card').style.display = 'none';
+      document.getElementById('gallery-card').style.display = 'none';
+      document.getElementById('cart-receipt-box').style.display = 'none';
+      document.getElementById('run-btn').disabled = true;
+      document.getElementById('run-btn').textContent = 'Researching...';
+      showStatus(
+        execution_mode === 'vm_playwright' ? 'Requesting the VM browser. You can follow each stage below.'
+          : (use_client_browser ? 'Requesting your connected local browser.'
+            : (execution_mode === 'sample' ? 'Preparing an illustrative preview...' : 'Starting research. You can follow each stage below.'))
+      );
+
+      const headers = { 'Content-Type': 'application/json' };
+      if (webiq_key) headers['X-WebIQ-Key'] = webiq_key;
+      if (CSRF_TOKEN) headers['X-CSRF-Token'] = CSRF_TOKEN;
+
+      try {
+        const res = await fetch('/api/run', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            product_url,
+            user_intent,
+            webiq_query: webiq_query || null,
+            execution_mode,
+            inspect_review_pages,
+            use_client_browser,
+            ...communityRequestOptions(),
+          })
+        });
+        if (res.status === 401 && AUTH_REQUIRED) {
+          window.location.replace('/login');
+          return;
+        }
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ detail: res.statusText }));
+          showStatus(err.detail || 'Request failed. Please check the URL and try again.', true);
+          logActivity('ERROR', err.detail || 'Run request failed');
+          timelineActivity({type: 'error', message: typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail)});
+          document.getElementById('run-btn').disabled = false;
+          return;
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let sawTerminal = false;
+        const consumeFrame = frame => {
+          const data = frame.split('\n').filter(line => line.startsWith('data: ')).map(line => line.slice(6)).join('\n');
+          if (!data) return;
+          const evt = JSON.parse(data);
+          if (evt.type === 'done') sawTerminal = true;
+          handleSseEvent(evt);
+        };
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const frames = buffer.split('\n\n');
+          buffer = frames.pop() || '';
+          for (const frame of frames) {
+            consumeFrame(frame);
+          }
+        }
+        buffer += decoder.decode();
+        if (buffer.trim()) consumeFrame(buffer);
+        if (!sawTerminal) throw new Error('The research stream ended before completion. Please retry.');
+      } catch (err) {
+        showStatus(`Connection error: ${String(err)}`, true);
+        logActivity('ERROR', String(err));
+        timelineActivity({type: 'error', message: String(err)});
+      } finally {
+        if (ACTIVE_RESEARCH && !ACTIVE_RESEARCH.finished) finishResearchTimeline('error');
+        RUNNING = false;
+        document.getElementById('research-form').removeAttribute('aria-busy');
+        document.querySelectorAll('#research-form input, #research-form textarea, #research-form select, #research-form button, .pill-btn, #load-example-btn').forEach(el => el.disabled = false);
+        document.getElementById('community-exploration').disabled = !['live', 'client_browser', 'vm_playwright'].includes(getExecutionMode());
+        updateInputModeBadge();
+      }
+    }
+
+    function handleSseEvent(evt) {
+      timelineActivity(evt);
+      if (evt.type === 'status') {
+        const stage = STAGE_STEPS[evt.stage];
+        const title = TIMELINE_STEPS.find(([id]) => id === stage)?.[1] || 'Preparing the research';
+        showStatus(`${title}...`);
+      } else if (evt.type === 'client_browser_command') {
+        dispatchClientBrowserCommand(evt);
+      } else if (evt.type === 'plan') {
+        renderPlan(evt.plan);
+      } else if (evt.type === 'skill_loaded') {
+        const chips = document.getElementById('loaded-skills');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'skill-chip';
+        btn.textContent = `📘 ${evt.skill}`;
+        btn.onclick = () => openSkillModal(evt.skill);
+        chips.appendChild(btn);
+      } else if (evt.type === 'activity') {
+        logActivity(evt.kind.toUpperCase(), evt.label, evt.detail, evt.provenance);
+      } else if (evt.type === 'screenshot') {
+        appendScreenshot(evt.screenshot);
+      } else if (evt.type === 'product_baseline') {
+        const b = evt.baseline;
+        const priceDisplay = b.price !== null && b.price !== undefined
+          ? `$${Number(b.price).toFixed(2)} ${escapeHtml(b.currency)}`
+          : (getExecutionMode() !== 'sample' ? 'Not visible on inspected page (not guessed)' : 'Unverified (Custom URL in Sample Mode)');
+        document.getElementById('baseline-meta').innerHTML = `
+          <div><strong>Product:</strong> ${escapeHtml(b.brand)} ${escapeHtml(b.model)} • <strong>SKU:</strong> <code>${escapeHtml(b.sku)}</code> • <strong>Variant:</strong> ${escapeHtml(b.variant)}</div>
+          <div style="margin-top:4px;"><strong>Offer / Seller:</strong> ${priceDisplay} via ${escapeHtml(b.seller)} • <strong>Provenance:</strong> <code>${escapeHtml(b.data_provenance)}</code></div>
+          ${b.limitation_notice ? `<div style="margin-top:4px; color:var(--amber); font-weight:600;">ℹ️ ${escapeHtml(b.limitation_notice)}</div>` : ''}
+        `;
+        if (b.retrieved_response) appendRetrievedResponse(document.getElementById('baseline-meta'), {
+          ...b, url: b.url || ACTIVE_RESEARCH?.options.productUrl,
+          inspection_method: b.inspection_method || ACTIVE_RESEARCH?.options.seedInspector
+        }, 'inspection');
+      } else if (evt.type === 'enrichment') {
+        renderEnrichment(evt);
+      } else if (evt.type === 'browsed_sources') {
+        renderBrowsedSources(evt.sources || []);
+      } else if (evt.type === 'source_inspection') {
+        renderBrowsedSources([...ACTIVE_RESEARCH.inspectionRows.values()]);
+      } else if (evt.type === 'claim_matrix') {
+        renderClaimMatrix(evt);
+      } else if (evt.type === 'cart_gate') {
+        renderCartGate(evt.cart_gate);
+      } else if (evt.type === 'evidence_archive') {
+        const status = document.getElementById('saved-research-status');
+        status.hidden = false; status.replaceChildren();
+        status.appendChild(document.createTextNode(evt.status === 'saved'
+          ? `Saved until explicitly deleted, including ${evt.screenshots || 0} genuine screenshots. `
+          : evt.status === 'failed' ? `Evidence retention incomplete: ${evt.message || 'Storage unavailable.'} `
+          : 'Saving permitted evidence and genuine screenshots for follow-up. '));
+        if (/^\/saved-research\?run=[0-9]{8}T[0-9]{6}Z-[a-f0-9]{32}$/.test(evt.url || '')) {
+          const link = document.createElement('a'); link.href = evt.url;
+          link.textContent = 'Open saved research'; status.appendChild(link);
+        }
+      } else if (evt.type === 'artifact') {
+        const link = document.getElementById('download-report-link');
+        link.href = evt.url;
+        link.style.display = 'inline-flex';
+      } else if (evt.type === 'error') {
+        discardWebIqGrounding();
+        showStatus(evt.message || 'An error occurred during the run.', true);
+      } else if (evt.type === 'done') {
+        if (evt.outcome !== 'error' && !ACTIVE_RESEARCH?.hasError) {
+          const isLiveRun = String(evt.run_mode || '').startsWith('live_');
+          showStatus(
+            isLiveRun
+              ? (evt.outcome === 'partial'
+                  ? 'Research completed with partial coverage. Expand the timeline to inspect evidence gaps.'
+                  : 'Research complete. Expand the timeline to trace the evidence.')
+              : 'Your brief is ready. Findings remain illustrative unless explicitly labelled as live search.'
+          );
+          document.getElementById('verdict-title').focus({ preventScroll: true });
+          document.getElementById('verdict-card').scrollIntoView({block: 'start'});
+        }
+      }
+    }
+
+    function renderBrowsedSources(sources) {
+      const wrap = document.getElementById('browsed-sources-wrap');
+      const list = document.getElementById('browsed-sources-list');
+      if (!wrap || !list) return;
+      if (!sources || sources.length === 0) {
+        wrap.style.display = 'none';
+        return;
+      }
+      document.getElementById('sources-card').style.display = 'block';
+      wrap.style.display = 'block';
+      list.replaceChildren();
+      sources.forEach(s => {
+        const badgeColor = s.access_status === 'inspected' ? 'emerald' : 'amber';
+        const item = document.createElement('div');
+        item.className = 'source-item';
+        item.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+              <div>
+                <span class="badge ${badgeColor}">${escapeHtml(s.platform)}</span>
+                <span class="badge neutral">Page status: ${escapeHtml(s.access_status)}</span>
+                <span class="badge neutral">${escapeHtml(METHOD_LABELS[s.inspection_method] || s.inspection_method || 'Inspector not recorded')}</span>
+                <span class="badge neutral">${Number(s.fetched_characters || 0)} fetched characters</span>
+                ${s.agent_explored ? `<span class="badge violet">Agent-explored: ${escapeHtml(s.discovery_origin)}</span><span class="badge neutral">${Number(s.discussion_blocks_observed || 0)} discussion blocks (unverified)</span>` : ''}
+              </div>
+              <a href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer" class="badge">Open Source ↗</a>
+            </div>
+            <div style="margin-top:6px; font-weight:700;">${escapeHtml(s.title)}</div>
+            ${!s.retrieved_response && s.extracted_summary && !isWebIqGrounding(s) ? `<div style="color:var(--text-secondary); margin-top:4px;">Digest (not raw response): ${escapeHtml(s.extracted_summary)}</div>` : ''}
+            ${s.restriction_reason ? `<p style="color:var(--amber);">${escapeHtml(s.restriction_reason)}</p>` : ''}
+        `;
+        list.appendChild(item);
+        appendRetrievedResponse(item, s, 'inspection');
+        if (s.parent_url) {
+          const origin = document.createElement('p');
+          origin.textContent = `Observed link from: ${s.parent_url}`;
+          item.appendChild(origin);
+        }
+        for (const step of s.exploration_steps || []) {
+          const details = document.createElement('details');
+          details.className = 'community-observation';
+          const summary = document.createElement('summary');
+          summary.textContent = `Agent step ${step.step}: ${step.action} | ${step.goal} | ${step.status || 'pending'}`;
+          details.appendChild(summary);
+          const reason = document.createElement('p');
+          reason.textContent = `Why: ${step.reason}${step.error ? ` | ${step.error}` : ''}`;
+          details.appendChild(reason);
+          appendRetrievedResponse(details, {
+            url: s.url, title: s.title, inspection_method: s.inspection_method,
+            screenshot_artifact_id: step.screenshot_artifact_id,
+            retrieved_response: {
+              url: s.url, title: s.title, status: step.status, inspection_method: s.inspection_method,
+              content: [...(step.visible_discussion_blocks || []), step.viewport_text || ''].filter(Boolean).join('\n').slice(0, 3200),
+            },
+          }, 'inspection');
+          item.appendChild(details);
+        }
+      });
+    }
+
+    function renderClaimMatrix(evt) {
+      document.getElementById('verdict-card').style.display = 'block';
+      const provBadge = document.getElementById('verdict-provenance-badge');
+      if (ACTIVE_RESEARCH?.options.mode !== 'sample') {
+        provBadge.className = (evt.evidence_gaps || []).length ? 'badge amber' : 'badge emerald';
+        provBadge.textContent = `${METHOD_LABELS[ACTIVE_RESEARCH.options.mode]} | ${evt.run_mode || 'Live research'}`;
+      } else if (evt.run_mode === 'live_phase1_full') {
+        provBadge.className = 'badge emerald';
+        provBadge.textContent = 'Live research (configured Foundry model and selected tools)';
+      } else if (evt.run_mode === 'live_bat_listing_only') {
+        provBadge.className = 'badge amber';
+        provBadge.textContent = 'Phase-1 Partial: Live BAT Listing Only (No Web IQ Key Entered)';
+      } else if (evt.run_mode === 'live_bat_site_restricted') {
+        provBadge.className = 'badge amber';
+        provBadge.textContent = 'Phase-1 Partial: Retailer Blocked Automated Browser + Live Web IQ';
+      } else if (evt.run_mode === 'live_webiq_only_foundry_blocked') {
+        provBadge.className = 'badge amber';
+        provBadge.textContent = 'Phase-1 Partial: Live Web IQ Search Only (Foundry BAT Unavailable)';
+      } else if (evt.is_custom_url && evt.run_mode !== 'mixed_live_search_sample_analysis') {
+        provBadge.className = 'badge amber';
+        provBadge.textContent = 'Unverified Custom URL — Checklist Mode (No Specs or Reviews Guessed)';
+      } else if (evt.run_mode === 'mixed_live_search_sample_analysis') {
+        provBadge.className = 'badge emerald';
+        provBadge.textContent = 'Live search only — claims not verified';
+      } else {
+        provBadge.className = 'badge amber';
+        provBadge.textContent = 'Curated Sample Walkthrough — Local Fixture Data';
+      }
+
+      document.getElementById('verdict-badge').textContent = evt.recommendation_badge;
+      document.getElementById('verdict-summary').textContent = evt.executive_summary;
+
+      const fitsList = document.getElementById('what-fits-list');
+      fitsList.innerHTML = (evt.what_fits || []).map(item => `<li>${escapeHtml(item)}</li>`).join('');
+
+      const risksList = document.getElementById('watch-outs-list');
+      risksList.innerHTML = (evt.watch_outs || []).map(item => `<li>${escapeHtml(item)}</li>`).join('');
+
+      const gaps = evt.evidence_gaps || [];
+      const gapsBox = document.getElementById('evidence-gaps-box');
+      const gapsList = document.getElementById('evidence-gaps-list');
+      if (gapsBox && gapsList) {
+        if (gaps.length > 0) {
+          gapsBox.style.display = 'block';
+          gapsList.innerHTML = gaps.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+        } else {
+          gapsBox.style.display = 'none';
+          gapsList.innerHTML = '';
+        }
+      }
+      if (evt.browsed_sources && evt.browsed_sources.length > 0) {
+        renderBrowsedSources(evt.browsed_sources);
+      }
+
+      document.getElementById('matrix-card').style.display = 'block';
+      const list = document.getElementById('matrix-list');
+      list.innerHTML = '';
+      (evt.matrix || []).forEach(row => {
+        const isWarn = row.verdict.includes('Optimistic') || row.verdict.includes('Context') || row.verdict.includes('Unverified') || row.verdict.includes('Cannot');
+        const attr = row.source_attribution || {};
+        const card = document.createElement('div');
+        card.className = 'claim-card';
+      const provLabel = row.provenance === 'sample_fixture'
+        ? 'Illustrative, not a verified claim'
+        : (row.provenance === 'live_phase1' ? 'Configured model + live evidence' : 'Manual verification needed');
+        card.innerHTML = `
+          <div class="claim-card-top">
+            <strong style="font-size:0.92rem;">${escapeHtml(row.seller_claim)}</strong>
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              <span class="badge ${isWarn ? 'amber' : 'emerald'}">${escapeHtml(row.verdict)}</span>
+              <span class="badge neutral">${escapeHtml(provLabel)}</span>
+              ${attr.url ? `<a href="${escapeHtml(attr.url)}" target="_blank" rel="noopener noreferrer" class="badge">${row.provenance === 'sample_fixture' ? 'Example site: ' : 'Source: '}${escapeHtml(attr.label || 'Source')} ↗</a>` : ''}
+            </div>
+          </div>
+          <div class="claim-detail-grid">
+            <div class="claim-detail-cell">
+              <div style="font-weight:700; font-size:0.76rem; color:var(--muted);">MULTI-PLATFORM EVIDENCE</div>
+              <div style="margin-top:3px;">${escapeHtml(row.Cross_platform_evidence)}</div>
+            </div>
+            <div class="claim-detail-cell">
+              <div style="font-weight:700; font-size:0.76rem; color:var(--muted);">IMPACT ON YOUR NEEDS</div>
+              <div style="margin-top:3px;">${escapeHtml(row.user_intent_impact)}</div>
+            </div>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+
+      document.getElementById('signals-card').style.display = 'block';
+      if (evt.evidence_quality_disclaimer) {
+        document.getElementById('signals-disclaimer').textContent = evt.evidence_quality_disclaimer;
+      }
+      const sigGrid = document.getElementById('signals-grid');
+      sigGrid.innerHTML = '';
+      (evt.authenticity_signals || []).forEach(sig => {
+        const box = document.createElement('div');
+        box.className = 'signal-box';
+        box.innerHTML = `
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; font-weight:700;">
+            <span>${escapeHtml(sig.signal)}</span>
+            <span class="badge neutral">${escapeHtml(sig.status)}</span>
+          </div>
+          <div style="color:var(--muted); margin-top:5px;">${escapeHtml(sig.detail)}</div>
+        `;
+        sigGrid.appendChild(box);
+      });
+    }
+
+    function renderEnrichment(evt) {
+      const card = document.getElementById('sources-card');
+      card.style.display = 'block';
+      const list = document.getElementById('web-sources-list');
+      list.innerHTML = '';
+      const sources = evt.sources || [];
+      document.getElementById('sources-subtext').textContent =
+        evt.provenance === 'sample_fixture'
+          ? 'Illustrative fixtures, not quotations from these publishers.'
+          : `Retrieved via ${evt.provenance || 'unverified discovery'}. Expand each display-limited response. A search result is not a viewed page; WebIQ grounding is removed when the workflow ends.`;
+      const uniquePlatforms = [...new Set(sources.map(s => s.platform))];
+      document.getElementById('web-sources-badge').textContent =
+        sources.length > 0
+          ? `${sources.length} excerpts across ${uniquePlatforms.length} platforms (${evt.provenance === 'live_webiq' ? 'Live Web IQ' : (evt.provenance === 'live_toolbox_web_search' ? 'Live Foundry Toolbox web_search' : 'Sample Fixtures')})`
+          : (evt.provenance === 'unavailable_missing_key'
+              ? 'Discovery unavailable (No Web IQ key entered in portal)'
+              : 'No external sources fetched');
+
+      if (sources.length === 0) {
+        list.innerHTML = `<div class="source-item">${escapeHtml(evt.message || 'No external review sources were queried for this custom URL in Sample Mode.')}</div>`;
+        return;
+      }
+
+      sources.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'source-item';
+        const srcProvBadge = s.provenance === 'live_webiq'
+          ? 'Live Web IQ Excerpt (<=200 chars)'
+          : (s.provenance === 'live_toolbox_web_search'
+              ? 'Live Foundry Toolbox web_search (<=200 chars)'
+              : 'Sample Fixture Excerpt (<=200 chars)');
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+            <div>
+              <span class="badge emerald">${escapeHtml(s.platform)}</span>
+              <span class="badge neutral">${escapeHtml(s.platform_category)}</span>
+            </div>
+            <span class="badge amber">${escapeHtml(srcProvBadge)}</span>
+          </div>
+          <div style="margin-top:6px; font-weight:700;">
+            <a href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer">
+              ${escapeHtml(s.title)} ↗
+            </a>
+          </div>
+        `;
+        list.appendChild(div);
+        appendRetrievedResponse(div, {...s, provenance: s.provenance || evt.provenance}, 'search');
+      });
+    }
+
+    function renderCartGate(gate) {
+      CURRENT_CART_GATE = gate;
+      document.getElementById('timeline-approval').hidden = false;
+      document.getElementById('cart-gate-card').style.display = 'block';
+      const priceText = gate.price !== null && gate.price !== undefined
+        ? `$${Number(gate.price).toFixed(2)} ${escapeHtml(gate.currency)}`
+        : 'Unverified (Disabled for custom URLs in Sample Mode)';
+      document.getElementById('approve-cart-btn').disabled = Boolean(gate.is_custom_url);
+      document.getElementById('cart-gate-details').innerHTML = `
+        <div style="color:var(--amber); font-weight:700; margin-bottom:4px;">ℹ️ ${escapeHtml(gate.simulation_notice || 'Simulation only — no real retailer cart is modified.')}</div>
+        <div><strong>Locked Product:</strong> ${escapeHtml(gate.brand)} ${escapeHtml(gate.model)} (SKU: <code>${escapeHtml(gate.sku)}</code> • Variant: ${escapeHtml(gate.variant)})</div>
+        <div><strong>Seller &amp; Price Lock:</strong> ${escapeHtml(gate.seller)} @ <strong>${priceText}</strong></div>
+        <div><strong>Permitted Simulation:</strong> <code>${escapeHtml(gate.allowed_action)}</code> • <strong>Hard-Blocked Routes:</strong> <code>${escapeHtml((gate.blocked_actions || []).join(', '))}</code></div>
+      `;
+    }
+
+    async function submitCartDecision(approved, requested_action) {
+      if (!CURRENT_CART_GATE) return;
+      const box = document.getElementById('cart-receipt-box');
+      box.style.display = 'block';
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (CSRF_TOKEN) headers['X-CSRF-Token'] = CSRF_TOKEN;
+        const res = await fetch('/api/cart/approve', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            approval_token: CURRENT_CART_GATE.approval_token,
+            approved,
+            sku: CURRENT_CART_GATE.sku,
+            variant: CURRENT_CART_GATE.variant,
+            seller: CURRENT_CART_GATE.seller,
+            max_price: CURRENT_CART_GATE.max_price_ceiling,
+            quantity: 1,
+            requested_action
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          const isPolicyBlock = res.status === 403;
+          box.innerHTML = `
+            <div style="background:var(--rose-soft); border:1px solid #fda4af; border-radius:8px; padding:12px; color:var(--rose);">
+              <strong>${isPolicyBlock ? 'Action blocked by demo policy' : 'The request failed'} (HTTP ${res.status}):</strong> ${escapeHtml(data.detail || 'Please retry.')}
+            </div>
+          `;
+          logActivity(isPolicyBlock ? 'CART_GUARDRAIL' : 'ERROR', `Action '${requested_action}' did not complete`, data.detail, 'simulation_only');
+          return;
+        }
+        box.innerHTML = `
+          <div style="background:var(--emerald-soft); border:1px solid #6ee7b7; border-radius:8px; padding:12px; color:var(--emerald);">
+            <strong>✅ Cart Gate Simulation Complete (No Real Retailer Cart Modified):</strong> ${escapeHtml(data.message)}
+          </div>
+        `;
+        if (data.screenshot) {
+          appendScreenshot(data.screenshot);
+        }
+        if (data.status === 'simulated_add_to_cart') document.getElementById('approve-cart-btn').disabled = true;
+        logActivity('CART_SIMULATION', `Validated simulated cart lock for SKU ${data.sku}`, data.message, 'simulation_only');
+      } catch (err) {
+        box.textContent = 'The approval request could not complete. Check the connection before retrying.';
+        logActivity('ERROR', String(err));
+      }
+    }
+
+    function openScreenshotModal(shot) {
+      const isLivePng = Boolean(shot.is_live_browser_capture);
+      document.getElementById('modal-title').textContent = `${isLivePng ? 'Genuine Browser Screenshot' : 'Stage Illustration'} #${shot.sequence}: ${shot.title}`;
+      document.getElementById('modal-body').innerHTML = `
+        <div style="margin-bottom:8px;"><span class="badge ${isLivePng ? 'emerald' : 'amber'}">${escapeHtml(shot.provenance_label || (isLivePng ? 'Genuine Browser Capture (PNG)' : 'Generated SVG Illustration (Not a live browser capture)'))}</span></div>
+        <img src="${escapeHtml(shot.content_url)}" alt="${escapeHtml(shot.title)}" style="width:100%; border-radius:8px; border:1px solid var(--border);" />
+        <div style="margin-top:10px; font-size:0.82rem; color:var(--muted); overflow-wrap:anywhere;">
+          <div><strong>Stage:</strong> <code>${escapeHtml(shot.stage)}</code> • <strong>Capture Kind:</strong> <code>${escapeHtml(shot.capture_kind || 'generated_svg_illustration')}</code></div>
+          <div><strong>SHA-256 Hash:</strong> <code>${escapeHtml(shot.sha256)}</code></div>
+          <div style="margin-top:4px; color:var(--text);">${escapeHtml(shot.caption)}</div>
+        </div>
+      `;
+      document.getElementById('modal-backdrop').showModal();
+      document.getElementById('modal-close-btn').focus();
+    }
+
+    function openSkillModal(skillName) {
+      const s = SKILLS_CACHE[skillName];
+      if (!s) return;
+      document.getElementById('modal-title').textContent = `Methodology Skill: ${s.name}/SKILL.md`;
+      document.getElementById('modal-body').innerHTML = `
+        <div style="margin-bottom:8px; color:var(--muted); font-size:0.84rem;">${escapeHtml(s.description)}</div>
+        <pre class="skill-pre">${escapeHtml(s.markdown)}</pre>
+      `;
+      document.getElementById('modal-backdrop').showModal();
+      document.getElementById('modal-close-btn').focus();
+    }
+
+    function closeModal() {
+      document.getElementById('modal-backdrop').close();
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    mountResearchTimeline();
+    setInterval(renderRunComparisons, 10000);
+    initPortal();
+  </script>
+</body>
+</html>

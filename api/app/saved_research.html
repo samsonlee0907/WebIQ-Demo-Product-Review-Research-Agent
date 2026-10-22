@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Saved research | Product review assistant</title>
+  <style>
+    :root{font:16px/1.55 "Segoe UI",sans-serif;color:#172b3d;background:#f5f7fa}
+    *{box-sizing:border-box}body{margin:0}main,header{max-width:1100px;margin:auto;padding:24px}
+    header{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}h1{font-size:1.9rem;margin:8px 0}
+    h2{font-size:1.2rem}a{color:#086f80;overflow-wrap:anywhere}button,.button{font:inherit;border:1px solid #bfd0db;border-radius:9px;padding:9px 14px;background:white;color:#174454;cursor:pointer;text-decoration:none;display:inline-block}
+    button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #0b8da1;outline-offset:3px}
+    article,section.card{background:white;border:1px solid #dce4ea;border-radius:14px;padding:22px;margin:18px 0;min-width:0}
+    .muted{color:#506779}.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.danger{color:#a72222;border-color:#d9aaaa}
+    pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.55 Consolas,monospace;background:#f5f7fa;padding:14px;border-radius:8px}
+    details{padding:12px 0;border-top:1px solid #e4ebef}summary{cursor:pointer;font-weight:600;overflow-wrap:anywhere}
+    .captures{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr));gap:16px}
+    figure{margin:0}img{width:100%;height:auto;border:1px solid #dce4ea;border-radius:8px}figcaption{font-size:.85rem;overflow-wrap:anywhere}
+    p,li{overflow-wrap:anywhere}.notice{border-left:3px solid #0b8da1;padding-left:14px}.error{color:#a72222}
+    [hidden]{display:none!important}@media(max-width:480px){main,header{padding:16px}article,section.card{padding:16px}h1{font-size:1.55rem}}
+  </style>
+</head>
+<body>
+<header><strong>Product review assistant</strong><nav class="actions" aria-label="Workspace"><a href="/">New research</a><a href="/benchmark-report">Compare methods</a></nav></header>
+<main>
+  <h1>Saved research</h1>
+  <p class="muted notice">Retained until explicitly deleted. This is a shared internal demo library: anyone with the portal passcode can view or delete these records. Do not use it for confidential multi-user research.</p>
+  <p class="muted">Generated reports retain their source attribution. Independent browser observations and genuine screenshots are retained; raw WebIQ search/browse responses are not. Captured text is bounded evidence, not a complete copy of a website.</p>
+  <p id="status" role="status" aria-live="polite">Loading saved research...</p>
+  <div id="library"></div><button id="older" hidden>Load older research</button>
+  <section id="research" hidden aria-label="Selected saved research"></section>
+</main>
+<script>
+  'use strict';
+  const byId = id => document.getElementById(id);
+  const modeNames = {live:'Azure Browser Automation',client_browser:'Local browser / Playwright',vm_playwright:'Azure VM / Playwright',webiq_browse:'WebIQ Browse',sample:'Illustrative sample',auto:'Automatic route'};
+  const outcomeNames = {historical_browser_evidence:'Historical browser evidence',retention_incomplete:'Retention incomplete',running:'In progress',interrupted:'Interrupted',complete:'Complete',partial:'Partial coverage',error:'Failed'};
+  let csrf = '', cursor = '', selected = '';
+  function add(parent, tag, text, className='') {
+    const node = document.createElement(tag); node.textContent = text || '';
+    if(className) node.className = className; parent.appendChild(node); return node;
+  }
+  function safeUrl(value) {
+    try { const url = new URL(value); return ['https:','http:'].includes(url.protocol) && !url.username && !url.password ? url.href : ''; }
+    catch { return ''; }
+  }
+  function externalLink(parent, text, value) {
+    const href = safeUrl(value); if(!href) return;
+    const link = add(parent,'a',text); link.href=href; link.target='_blank'; link.rel='noopener noreferrer';
+  }
+  async function request(path, options={}) {
+    const response = await fetch(path,{credentials:'same-origin',cache:'no-store',...options});
+    if(!response.ok) {
+      if(response.status===401) throw new Error('Sign in through New research, then reopen this saved link.');
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.detail || `Request failed (HTTP ${response.status}).`);
+    }
+    return response.json();
+  }
+  function reportError(error) { byId('status').textContent=error.message; byId('status').className='error'; }
+  async function loadLibrary(append=false) {
+    const data = await request('/api/saved-research' + (cursor ? '?before='+encodeURIComponent(cursor) : ''));
+    const library=byId('library'); if(!append) library.replaceChildren();
+    for(const row of data.runs) {
+      const card=add(library,'article',''); add(card,'h2',row.user_intent || 'Product research');
+      externalLink(card,row.product_url,row.product_url);
+      add(card,'p',`${new Date(row.created_at).toLocaleString()} | ${modeNames[row.execution_mode] || row.execution_mode} | ${outcomeNames[row.outcome] || row.outcome} | ${row.screenshots} screenshots`, 'muted');
+      const open=add(card,'a','Open saved research','button'); open.href='/saved-research?run='+encodeURIComponent(row.archive_id);
+    }
+    cursor=data.next || ''; byId('older').hidden=!cursor;
+    byId('status').textContent=library.childElementCount ? 'Saved research remains available after portal restarts and deployments.' : 'No saved research yet. Start a new run from the portal.';
+  }
+  async function loadResearch(id) {
+    const data=await request('/api/saved-research/'+encodeURIComponent(id));
+    selected=id; const root=byId('research'); root.replaceChildren(); root.hidden=false;
+    add(root,'h2',data.user_intent || 'Saved product research'); externalLink(root,data.product_url,data.product_url);
+    add(root,'p',`${new Date(data.created_at).toLocaleString()} | ${modeNames[data.execution_mode] || data.execution_mode} | ${outcomeNames[data.outcome] || data.outcome}`,'muted');
+    const actions=add(root,'p','','actions');
+    const download=add(actions,'a','Download evidence + screenshots','button');
+    download.href='/api/saved-research/'+encodeURIComponent(id)+'/export';
+    const copy=add(actions,'button','Copy follow-up link');
+    copy.onclick=async()=>{try{await navigator.clipboard.writeText(location.href);byId('status').textContent='Follow-up link copied. The portal passcode is still required.';}catch{byId('status').textContent='Copy the current address from your browser to keep this saved research link.';}};
+    const remove=add(actions,'button','Delete saved research','danger'); remove.onclick=deleteSelected;
+    const analysis=data.analysis;
+    if(analysis) {
+      const card=add(root,'section','','card'); add(card,'h2',analysis.recommendation_badge || 'Generated assessment');
+      add(card,'p',analysis.executive_summary);
+      for(const [key,label] of [['what_fits','What fits'],['watch_outs','Watch-outs'],['evidence_gaps','Evidence gaps']]) {
+        if(analysis[key]?.length){add(card,'h3',label);const list=add(card,'ul','');analysis[key].forEach(text=>add(list,'li',text));}
+      }
+      for(const row of analysis.matrix || []) {
+        const item=add(card,'details',''); add(item,'summary',`${row.seller_claim || 'Claim'} | ${row.verdict || 'Unverified'}`);
+        add(item,'p',row.Cross_platform_evidence); const attribution=row.source_attribution || {};
+        externalLink(item,attribution.label || 'Attributed source',attribution.url);
+      }
+    } else add(root,'p','No completed generated assessment was retained for this run. Any captured browser evidence remains available.');
+    const observations=[...(data.listing_observation ? [{url:data.product_url,...data.listing_observation}] : []),...(data.observations || [])];
+    const evidence=add(root,'section','','card'); add(evidence,'h2',`Browser evidence (${observations.length})`);
+    if(!observations.length) add(evidence,'p','No independently captured browser text was retained. Search-only and WebIQ Browse do not create independent browser evidence.');
+    for(const row of observations) {
+      const item=add(evidence,'details',''); add(item,'summary',`${row.url || row.canonical_url} | ${row.status || row.data_provenance || 'Observed'}`);
+      add(item,'pre',JSON.stringify(row,null,2));
+    }
+    if(data.community_actions?.length) {
+      const actions=add(root,'details',''); add(actions,'summary','Agent exploration decisions'); add(actions,'pre',JSON.stringify(data.community_actions,null,2));
+    }
+    const captures=add(root,'section','','card'); add(captures,'h2',`Genuine browser screenshots (${data.screenshots.length})`);
+    const grid=add(captures,'div','','captures');
+    for(const shot of data.screenshots) {
+      const figure=add(grid,'figure',''); const image=add(figure,'img','');
+      image.src='/api/saved-research/'+encodeURIComponent(id)+'/captures/'+encodeURIComponent(shot.artifact_id);
+      image.alt=shot.title || 'Retained browser viewport'; image.loading='lazy';
+      add(figure,'figcaption',`${shot.captured_at} | ${shot.capture_kind} | SHA-256 ${shot.sha256}`);
+      externalLink(figure,shot.url,shot.url);
+    }
+    if(!data.screenshots.length) add(captures,'p','No genuine viewport screenshots were produced; generated illustrations are not substituted.');
+    if(data.report_markdown) {
+      const report=add(root,'details',''); add(report,'summary','Complete generated report (Markdown)'); add(report,'pre',data.report_markdown);
+    }
+    root.scrollIntoView({block:'start'});
+  }
+  async function deleteSelected() {
+    if(!confirm('Permanently delete this saved run and its archived screenshots? Previously downloaded or separate benchmark copies are not removed.')) return;
+    try {
+      await request('/api/saved-research/'+encodeURIComponent(selected),{method:'DELETE',headers:csrf?{'X-CSRF-Token':csrf}:{}});
+      byId('research').hidden=true; history.replaceState(null,'','/saved-research'); cursor='';
+      await loadLibrary(); byId('status').textContent='Saved research and its archived screenshot objects were deleted.';
+    } catch(error) { reportError(error); }
+  }
+  byId('older').onclick=()=>loadLibrary(true).catch(reportError);
+  (async()=>{
+    const session=await request('/api/auth/session'); csrf=session.csrf_token || '';
+    await loadLibrary(); const id=new URL(location.href).searchParams.get('run'); if(id) await loadResearch(id);
+  })().catch(reportError);
+</script>
+</body>
+</html>

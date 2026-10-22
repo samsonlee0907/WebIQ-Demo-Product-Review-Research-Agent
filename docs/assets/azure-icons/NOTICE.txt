@@ -1,0 +1,25 @@
+Microsoft Azure architecture icons
+Copyright Microsoft Corporation. All rights reserved.
+
+These selected assets support the architecture diagrams in this repository.
+They are not covered by the repository's MIT license.
+
+Official source and usage guidance:
+https://learn.microsoft.com/en-us/azure/architecture/icons/
+Official download:
+https://arch-center.azureedge.net/icons/Azure_Public_Service_Icons_V24.zip
+
+Microsoft's icon terms, as published on the source page:
+"Microsoft permits the use of these icons in architectural diagrams, training
+materials, or documentation. You can copy, distribute, and display the icons
+only for the permitted use unless granted explicit permission by Microsoft.
+Microsoft reserves all other rights."
+
+The original Microsoft_Terms_of_Use.pdf is included without modification.
+manifest.json records the exact archive entries and SHA-256 digests.
+
+SVG files retain their original bytes. PNG files are transparent proportional
+renders for PowerPoint compatibility. No icon artwork is cropped, flipped,
+rotated, recolored or distorted. Product names remain adjacent to service icons.
+The general Browser and Toolbox symbols are capability symbols, not logos for
+the portal, WebIQ or a new Azure service.

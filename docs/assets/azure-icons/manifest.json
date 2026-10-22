@@ -1,0 +1,60 @@
+{
+  "source_page": "https://learn.microsoft.com/en-us/azure/architecture/icons/",
+  "archive_url": "https://arch-center.azureedge.net/icons/Azure_Public_Service_Icons_V24.zip",
+  "archive_sha256": "921594ccd1bf3d9c0a1bd7b6d924e050551a59342f2b353bb74bdcf761c35141",
+  "downloaded_at": "2026-10-21T15:46:11.361112+00:00",
+  "svg_content_changed": false,
+  "png_rendering": "Desktop Edge; 256x256 CSS image with object-fit:contain, transparent background, device scale 2. No recoloring, cropping, rotation or non-uniform scaling.",
+  "icons": {
+    "container-apps-environment": {
+      "archive_member": "Azure_Public_Service_Icons/Icons/other/02989-icon-service-Container-Apps-Environments.svg",
+      "svg": "container-apps-environment.svg",
+      "svg_sha256": "3cf4ba9242e31496f778a27e92c9c2b2a09664f105c58325d5e2dcb142d3c3b9",
+      "png": "container-apps-environment.png",
+      "png_sha256": "cf3db77e1b139a7221d366bd0840bb0ff64760e7e103539c7daa7e7dd451672e"
+    },
+    "foundry-models": {
+      "archive_member": "Azure_Public_Service_Icons/Icons/ai + machine learning/038470614-icon-service-Foundry-Models.svg",
+      "svg": "foundry-models.svg",
+      "svg_sha256": "9c671f141cb0e19b62e004628183ed8711ad16ec3b2e56b14c3cd035d5fac711",
+      "png": "foundry-models.png",
+      "png_sha256": "1f0e903ae3a795501e2646e993858bbeb0656dd700818d996f778767518513c4"
+    },
+    "storage-account": {
+      "archive_member": "Azure_Public_Service_Icons/Icons/storage/10086-icon-service-Storage-Accounts.svg",
+      "svg": "storage-account.svg",
+      "svg_sha256": "7190d3bb14ce30ce74bd0af873915830fe821e8c5f6ef6f3149e6f7cfb2aa4f7",
+      "png": "storage-account.png",
+      "png_sha256": "5e7887b72c913a2634344e624e6e202890a6e9c223d2dbd5d7f0c899e15dd012"
+    },
+    "virtual-machine": {
+      "archive_member": "Azure_Public_Service_Icons/Icons/compute/10021-icon-service-Virtual-Machine.svg",
+      "svg": "virtual-machine.svg",
+      "svg_sha256": "092d18ffadec9ec0e5af129186dc7bc2a80544011e55f965604ed4b13873e0fc",
+      "png": "virtual-machine.png",
+      "png_sha256": "fb22dbadc42fde53f8aa2f81ada36d11aac98111699e5a113242cd14a0a471c5"
+    },
+    "managed-identity": {
+      "archive_member": "Azure_Public_Service_Icons/Icons/identity/10227-icon-service-Entra-Managed-Identities.svg",
+      "svg": "managed-identity.svg",
+      "svg_sha256": "2100bf636095348d0b75220450b5d88672c720f49c79972e95916e41e91ae169",
+      "png": "managed-identity.png",
+      "png_sha256": "03853d7ff8be1f8eb773fe449f4b9fcefa19197e7556e5cac1e130d1ce492b98"
+    },
+    "toolbox": {
+      "archive_member": "Azure_Public_Service_Icons/Icons/general/10844-icon-service-Toolbox.svg",
+      "svg": "toolbox.svg",
+      "svg_sha256": "c56ef74a842e432db697b7e46956daa8240ce21d27006225541b6450f36bf974",
+      "png": "toolbox.png",
+      "png_sha256": "aeb72f8058938f943d6a1554a830cfb9ef92940e8154b9e4da7ccdad7247401d"
+    },
+    "browser": {
+      "archive_member": "Azure_Public_Service_Icons/Icons/general/10783-icon-service-Browser.svg",
+      "svg": "browser.svg",
+      "svg_sha256": "d08afad9e64b5f69d5689bc831aefe7619150ba0a80583651bb5d75e4c033630",
+      "png": "browser.png",
+      "png_sha256": "8d71868d47ead8e555f28c8d5e13505b4a4683324f83d36ed2fabc76a65e6e19"
+    }
+  },
+  "terms_sha256": "983e83cef1a8f85164760b076a96df54cb50af345861cb1d8344040037d0531c"
+}

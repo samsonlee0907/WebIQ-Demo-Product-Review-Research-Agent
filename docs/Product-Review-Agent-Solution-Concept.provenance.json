@@ -1,0 +1,64 @@
+{
+  "output": "docs\\Product-Review-Agent-Solution-Concept.pptx",
+  "output_sha256": "d657bee06a537720fb622cdf2fa3c438053536f55f787e494662eaf9d233411b",
+  "slides": 5,
+  "diagram_names": [
+    "01-architecture",
+    "02-research-flow",
+    "03-request-sequence",
+    "04-routing-choices",
+    "05-evidence-boundary"
+  ],
+  "visual_reference": {
+    "filename": "Foundry-WorkIQ-Tool-Blob-Security-Briefing.pptx",
+    "sha256": "9afe56b777a27f269bbe350ccc4dfaf009f1031c3ab2a8ecbf6fb0d6641d98d9",
+    "usage": "Visual conventions only; no source slides, images or tenant content copied."
+  },
+  "generated_at": "2026-10-21T15:49:27.029120+00:00",
+  "provider_calls": 0,
+  "deployment_changes": false,
+  "diagram_structure_native_editable": true,
+  "icon_provenance": {
+    "source_page": "https://learn.microsoft.com/en-us/azure/architecture/icons/",
+    "archive_url": "https://arch-center.azureedge.net/icons/Azure_Public_Service_Icons_V24.zip",
+    "archive_sha256": "921594ccd1bf3d9c0a1bd7b6d924e050551a59342f2b353bb74bdcf761c35141",
+    "keys": [
+      "container-apps-environment",
+      "foundry-models",
+      "storage-account",
+      "virtual-machine",
+      "managed-identity",
+      "toolbox",
+      "browser"
+    ],
+    "embedded_occurrences": 14,
+    "original_svg_bytes_preserved": true
+  },
+  "render": {
+    "rendered_slides": 5,
+    "overflow": 0,
+    "shape_boundary_errors": 0
+  },
+  "images": [
+    {
+      "file": "docs\\solution-concept\\01-architecture.png",
+      "sha256": "9d63d39360b9eea6fa9d3c46c44f80a9b19d73d9fbee0fb18f4c862862e06f76"
+    },
+    {
+      "file": "docs\\solution-concept\\02-research-flow.png",
+      "sha256": "920fd047a636472ad361d84bee9e32419343d5b9b4a7426cb5c351cf6f478bee"
+    },
+    {
+      "file": "docs\\solution-concept\\03-request-sequence.png",
+      "sha256": "7aeaeb7c4127e8f73b4106f812daa57224b52f4dc57b9ff28233faedd5038b03"
+    },
+    {
+      "file": "docs\\solution-concept\\04-routing-choices.png",
+      "sha256": "45301f9302eccf32f31fcf30d738084e914906fb88cadb0b40e69e0edeeb0f29"
+    },
+    {
+      "file": "docs\\solution-concept\\05-evidence-boundary.png",
+      "sha256": "cafe9623998943ef165f60ed96e917d3bba2514f608f25176e707f7eba0d98b6"
+    }
+  ]
+}
